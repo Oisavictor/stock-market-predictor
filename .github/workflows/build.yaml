@@ -36,8 +36,6 @@ jobs:
         node-version: [16.x, 18.x, 19.x]
         os: [macos-latest, windows-latest, ubuntu-latest]
     
-    needs: [build]
-    
     steps:
     - uses: actions/checkout@v1
     - name: Create draft release
