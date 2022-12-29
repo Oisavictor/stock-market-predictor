@@ -45,25 +45,25 @@ jobs:
       uses: actions/add-to-project@v0.4.0
       with:
         # URL of the project to add issues to
-        project-url: 
+        project-url: https://github.com/users/Oisavictor/projects/2/views/1
         # A GitHub personal access token with write access to the project
-        github-token: 
+        github-token: 1
         # A comma-separated list of labels to use as a filter for issue to be added
-        labeled: # optional
+        labeled:  optional
         # The behavior of the labels filter, AND to match all labels, OR to match any label, NOT to exclude any listed label (default is OR)
-        label-operator: # optional
+        label-operator:  optional
         
         name: Test on node ${{ '8', '10', '12' }} and ${{ ubuntu-latest, windows-latest, macOS-latest }}
         runs-on: ${{ ubuntu-latest, windows-latest, macOS-latest }}
-        steps:
-        - uses: actions/checkout@v1
-        - name: Use Node.js ${{ matrix.node_version }}
-          uses: actions/setup-node@v1
-          with:
-            node-version: ${{ matrix.node_version }}
 
-        - name: npm install, build and test
-          run: |
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{  '8', '10', '12'  }}
+      uses: actions/setup-node@v1
+      with:
+            node-version: ${{  '8', '10', '12'  }}
+
+    - name: npm install, build and test
+      run: |
             npm install
             npm run build --if-present
             npm test
