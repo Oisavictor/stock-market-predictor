@@ -1,0 +1,70 @@
+# .github/workflows/build.yml
+name: Node CI
+
+on: [push]
+
+jobs:
+  build:
+
+    run-on: ${( matrix.os )}
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 19.x]
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${( matrix.node-version )}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${( matrix.node-version )}
+    - name: npm install, build, and test
+      run: |
+        npm ci
+        npm install && run build --if-present
+        npm test
+      env:
+      CI: true
+
+  release:
+
+    run-on: ${( matrix.os )}
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 19.x]
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    
+    needs: [build]
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Create draft release
+      id: create_draft_release
+      uses: actions/create-draft-release@v1.0.0
+      env:
+        # Access the `GITHUB_TOKEN` secret from the repository's secrets
+        GITHUB_TOKEN: ${( secrets.GITHUB_TOKEN )}
+      with:
+        # Access the `ref` from the `github` payload object
+        tag_name: ${( github.ref )}
+        release_name: Release ${( github.ref )}
+        draft: true
+        prerelease: false
+    - name: Generate release notes
+      id: generate_release_notes
+      uses: actions/generate-release-notesv@1.0.0
+      env:
+        # Access the `GITHUB_TOKEN` secret from the repository's secrets
+        GITHUB_TOKEN: ${( secrets.GITHUB_TOKEN )}
+    - name: Edit release to add notes
+      uses: actions/add-release-notes@v1.0.0
+      env:
+        # Access the `GITHUB_TOKEN` secret from the repository's secrets
+        GITHUB_TOKEN: ${( secrets.GITHUB_TOKEN )}
+      with:
+        # Access the `release notes` and `release_id` outputs, using the `id` from the output you want
+        release_notes: ${( steps.generate_notes.outputs.release_notes )}
+        release_id: ${( steps.create_draft_release.outputs.release_id )}
+
