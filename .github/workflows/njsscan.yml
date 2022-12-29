@@ -49,12 +49,9 @@ jobs:
         # A GitHub personal access token with write access to the project
         github-token: 1
         # A comma-separated list of labels to use as a filter for issue to be added
-        labeled:  optional
+        labeled:  bug
         # The behavior of the labels filter, AND to match all labels, OR to match any label, NOT to exclude any listed label (default is OR)
         label-operator:  optional
-        
-        name: Test on node ${[ '16', '18', '19' ]} and ${[ ubuntu-latest, windows-latest, macOS-latest ]}
-        runs-on: ${[ ubuntu-latest, windows-latest, macOS-latest ]}
 
     - uses: actions/checkout@v1
     - name: Use Node.js ${[  16.x, 18.x, 19.x  ]}
@@ -64,4 +61,5 @@ jobs:
       run: |
             npm install
             npm run build --if-present
+            npm test --if-present
         
