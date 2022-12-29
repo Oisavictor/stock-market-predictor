@@ -57,10 +57,10 @@ jobs:
         runs-on: ${[ ubuntu-latest, windows-latest, macOS-latest ]}
 
     - uses: actions/checkout@v1
-    - name: Use Node.js ${[  '16', '18', '19'  ]}
+    - name: Use Node.js ${[  16.x, 18.x, 19.x  ]}
       uses: actions/setup-node@v1
       with:
-            node-version: ${[  '16', '18', '19'  ]}
+            node-version: ${[  16.x, 18.x, 19.x  ]}
 
     - name: npm install, build and test
       run: |
