@@ -40,32 +40,30 @@ jobs:
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: results.sarif
-
-# .github/workflows/build.yml
-name: Node CI
-
-on: [push]
-
-jobs:
-  build:
-
-    run-on: ${( matrix.os )}
-
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x, 19.x]
-        os: [macos-latest, windows-latest, ubuntu-latest]
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${( matrix.node-version )}
-      uses: actions/setup-node@v1
+        
+    - name: Add To GitHub projects
+      uses: actions/add-to-project@v0.4.0
       with:
-        node-version: ${( matrix.node-version )}
-    - name: npm install, build, and test
-      run: |
-        npm ci
-        npm install && run build --if-present
-        npm test
-      env:
-      CI: true
+        # URL of the project to add issues to
+        project-url: 
+        # A GitHub personal access token with write access to the project
+        github-token: 
+        # A comma-separated list of labels to use as a filter for issue to be added
+        labeled: # optional
+        # The behavior of the labels filter, AND to match all labels, OR to match any label, NOT to exclude any listed label (default is OR)
+        label-operator: # optional
+        
+        name: Test on node ${{ '8', '10', '12' }} and ${{ ubuntu-latest, windows-latest, macOS-latest }}
+        runs-on: ${{ ubuntu-latest, windows-latest, macOS-latest }}
+        steps:
+        - uses: actions/checkout@v1
+        - name: Use Node.js ${{ matrix.node_version }}
+          uses: actions/setup-node@v1
+          with:
+            node-version: ${{ matrix.node_version }}
+
+        - name: npm install, build and test
+          run: |
+            npm install
+            npm run build --if-present
+            npm test
