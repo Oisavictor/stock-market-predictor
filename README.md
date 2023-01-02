@@ -34,7 +34,7 @@ Overall, this web platform has the potential to transform the stock market by br
 
     11. Auto-Trading using Bots and Artificial Intelligence to identify profitable stocks positions.
 
-> > ## Stacks
+> ## Stacks
 
 ## Backend: 
             Type-Graphql,Express, Typescript,socket.io
