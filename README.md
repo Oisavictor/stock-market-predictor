@@ -41,3 +41,12 @@ Overall, this web platform has the potential to transform the stock market by br
 
 ## Frontend: 
             Graphql, React, Tailwind, Socket.io,Typescript
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `yarn dev`
+Runs the app in the development mode.
+
+Open [http://localhost:3000](http://localhost:5000) to view it in the browser.
