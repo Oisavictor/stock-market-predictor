@@ -37,7 +37,7 @@ Overall, this web platform has the potential to transform the stock market by br
 > ## Stacks
 
 ## Backend: 
-            Type-Graphql,Express, Typescript,socket.io
+            Type-Graphql,Express, Typescript,socket.io,prisma
 
 ## Frontend: 
             Graphql, React, Tailwind, Socket.io,Typescript
