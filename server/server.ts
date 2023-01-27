@@ -1,12 +1,16 @@
 import express, { Express, Request, Response } from "express";
-
-const app: Express = express();
+import router from "./route/route";
 const port = 5000;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("stock_market_prediction");
-});
+const app: Express = express();
+app.use(express.json());
+
+
+app.use('/', router);
+
+
 
 app.listen(port, () => {
-  console.log(`app is been listen to on http://localhost:${port}`);
-});
+  console.log(`app is been listen to on http://localhost:${port}`)
+  }
+)
