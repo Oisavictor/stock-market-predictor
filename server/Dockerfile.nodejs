@@ -1,0 +1,7 @@
+FROM node:16
+WORKDIR /app
+COPY ./package.json ./
+COPY ./ ./
+RUN yarn install
+EXPOSE 6000
+CMD ["yarn", "dev2"]

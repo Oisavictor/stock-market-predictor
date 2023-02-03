@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  stockpredictionfe:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.reactUI
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+  stockpredictionbe:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.nodejs
+    ports:
+      - '6000:6000'
+    depends_on:
+      - db
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=tomisin
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_NAME=stockprediction
+    volumes:
+      - .:/server
