@@ -1,5 +1,4 @@
 import StockPriceSchema from '../models/StockPrice'
-import * as express from 'express'
 import messages from "../utils/errorMessage";
 
 //Predict stock
