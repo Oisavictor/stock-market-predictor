@@ -11,7 +11,7 @@ export const Routes = (router: any) => {
     next();
   });
 
-  router.get("/stock", getStockPrice);
+  router.get("/stock/:symbol", getStockPrice);
   router.post("/", predictStockPrice);
   router.get("/", landingPage);
 

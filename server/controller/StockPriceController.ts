@@ -2,7 +2,7 @@
 import { Request, Response } from "express";
 import {PredictStock } from "../services/stock.service";
 import { logger } from "../middleware/logger";
-import { stockMarketApi } from '../utils/stock/stock.api';
+import { YahooFinanceSymbol } from '../utils/stock/stock.api';
 export const landingPage = (req: Request, res: Response) => {
   res.send("stock_market_predict test");
 };
@@ -10,7 +10,8 @@ export const landingPage = (req: Request, res: Response) => {
 
 export const getStockPrice = async (req: Request, res: Response) => {
   try {
-    const stockPrice = await stockMarketApi();
+    const getParam = req.params.symbol
+    const stockPrice = await YahooFinanceSymbol(getParam);
     return res.json({stockPrice});
   } catch (err) {
     const error = new Error(err);
