@@ -6,9 +6,11 @@ import * as config from 'config'
 import { logger } from "./middleware/logger";
 //All routes file is called here
 import {Routes} from "./routes/route";
-
+//import prisma to connect automatically
+import { connectPrisma } from "./connectPrisma";
 //Express connection  
-export const ExpressConnection = () => {
+export const ExpressConnection = async() => {
+
     const PORT = config.get<number>('PORT')
     const app = express()
     app.use(express.json());
@@ -16,7 +18,7 @@ export const ExpressConnection = () => {
       origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:4200']
     }))
     // app.use('/', router);
-    
+    await connectPrisma()
     Routes(app)
     
     app.listen(PORT, () => {
