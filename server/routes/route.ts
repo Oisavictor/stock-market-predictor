@@ -1,19 +1,19 @@
 import * as express from "express";
+import '../config/index'
 import {
   landingPage,
-  getStockPrice,
-  predictStockPrice,
 
 } from "../controller/StockPriceController";
+
+
 export const Routes = (router: any) => {
+
   router.get("/healthCheck", (req, res, next) => {
     res.sendStatus(200);
     next();
   });
 
-  router.get("/stock/:symbol", getStockPrice);
-  router.post("/", predictStockPrice);
-  router.get("/", landingPage);
+  router.get('/', landingPage)
 
 
 };

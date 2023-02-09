@@ -3,9 +3,9 @@ import { logger } from "./middleware/logger";
 export const connectPrisma = async (): Promise<void> => {
     try {
        await prisma.$connect().then(() => {
-            console.log('Database is connected')
+            logger.info('Database is connected Successfully')
         }).catch((err) => {
-            logger.error(err.message)
+            logger.error(`Reasons why Database fails to connect: ${err.message}`)
             prisma.$disconnect()
         })
     } catch (error) {
