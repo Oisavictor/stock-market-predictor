@@ -6,9 +6,11 @@ import * as config from 'config'
 import { logger } from "./middleware/logger";
 //All routes file is called here
 import {Routes} from "./routes/route";
+import {UserRoutes} from './routes/user.routes'
 //import prisma to connect automatically
 import { connectPrisma } from "./connectPrisma";
 //Express connection  
+
 export const ExpressConnection = async() => {
 
     const PORT = config.get<number>('PORT')
@@ -20,6 +22,7 @@ export const ExpressConnection = async() => {
     // app.use('/', router);
     await connectPrisma()
     Routes(app)
+    UserRoutes(app)
     
     app.listen(PORT, () => {
       logger.info(`app is been listen to on http://localhost:${PORT}`)
