@@ -1,5 +1,5 @@
 import * as config from 'config'
-import {createTransport} from 'nodemailer'
+import { createTransport } from 'nodemailer'
 const host = config.get<string>('mailgun.HOST')
 const port = config.get<number>('mailgun.PORT')
 const secure = config.get<boolean>('mailgun.SECURE')
