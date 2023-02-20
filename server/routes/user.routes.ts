@@ -19,7 +19,8 @@ export const UserRoutes = (router: any) => {
   router.post(
     "/api/verify",
     validateResource(verifyUserOTPSchema),
-    verifyUserByOTP
+    verifyUserByOTP,
+    apiLimiter
   );
   
   router.get(
