@@ -1,5 +1,5 @@
 import * as express from "express";
-import { apiLimiter, createAccountLimiter } from "../helper/rateLimit"
+import { apiLimiter } from "../helper/rateLimit";
 import { validateResource } from "../resources/validateResources";
 import {
   createUserController,
@@ -13,7 +13,6 @@ export const UserRoutes = (router: any) => {
     "/api/user",
     validateResource(createUserSchema),
     createUserController,
-    createAccountLimiter
   );
 
   router.post(
