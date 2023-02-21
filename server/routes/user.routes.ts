@@ -15,6 +15,8 @@ const apiLimiter = rateLimit({
     "Too many requests from this IP, please try again after 15 minutes"
 });
 
+app.use(apilimiter); 
+
 export const UserRoutes = (router: any) => {
   router.post(
     "/api/user",
