@@ -12,7 +12,7 @@ export const UserRoutes = (router: any) => {
   router.post(
     "/api/user",
     validateResource(createUserSchema),
-    createUserController,
+    createUserController
   );
 
   router.post(
