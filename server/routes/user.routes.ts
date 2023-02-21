@@ -22,8 +22,10 @@ export const UserRoutes = (router: any) => {
     verifyUserByOTP,
     apiLimiter
   );
+
   router.get(
     "/api/:symbol", 
-    getStockPrice
+    getStockPrice,
+    apiLimiter
     );
 };
