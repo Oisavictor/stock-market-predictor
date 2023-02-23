@@ -10,7 +10,7 @@ import {UserRoutes} from './routes/user.routes'
 //import prisma to connect automatically
 import { connectPrisma } from "./connectPrisma";
 //Express connection  
-
+import { apiLimiter } from "./helper/rateLimit"
 export const ExpressConnection = async() => {
 
     const PORT = config.get<number>('PORT')
@@ -21,6 +21,7 @@ export const ExpressConnection = async() => {
     }))
     // app.use('/', router);
     await connectPrisma()
+    app.use('/api', apiLimiter)
     Routes(app)
     UserRoutes(app)
     
