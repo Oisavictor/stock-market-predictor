@@ -1,5 +1,4 @@
 import * as jwt from 'jsonwebtoken';
-
 import * as config from 'config'
 const privateKey = config.get<string>('token.ACCESS_TOKEN')
 export const accessToken = (data: any) => {
