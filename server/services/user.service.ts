@@ -4,11 +4,11 @@ import { generateOTP } from "../helper/getRandomOTP";
 import { accessToken } from "../helper/jwtToken";
 import { hash, CompareHashed } from "../helper/hash";
 import { logger } from "../middleware/logger";
-import { findUnique } from "../helper/findUnique";
+import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
-import { sendEmail } from "../utils/sendEmail";
 import { emailTemplete } from "../templete/emailTemplete";
-export const createUser = async (payload: any) => {
+import {registerDTO, loginDTO, verifyUserDTO} from '../dto//user.dto'
+export const createUser = async (payload: registerDTO) => {
   try {
     const user = await findUnique(payload.email);
     if (user) {
@@ -45,7 +45,7 @@ export const createUser = async (payload: any) => {
   }
 };
 
-export const VerifyUser = async (payload: any) => {
+export const VerifyUser = async (payload: verifyUserDTO) => {
   try {
     const findUser = await findUnique(payload.email);
     if (!findUser) {
@@ -89,10 +89,55 @@ export const VerifyUser = async (payload: any) => {
   }
 };
 
-export const LoginUser = async (payload: any) => {
+export const resendOTP = async (payload: any) => {
+  try{
+    const {email} = payload
+    const findUser = await findUnique(email)
+    if(findUser.confirmationCode != '' || findUser.isVerified === true) {
+      return {
+        ok: false,
+        status: StatusCodes.BAD_REQUEST,
+        msg: messages.VERIFIED,
+      };
+    }
+    const OTP = generateOTP(4);
+    const SendEmail = await emailTemplete(payload.email, OTP);
+    if (!SendEmail) {
+      return {
+        ok: false,
+        status: StatusCodes.REQUEST_TIMEOUT,
+        msg: messages.FAILED_EMAIL,
+      };
+    }
+    findUser.confirmationCode = await hash(OTP.toString())
+    const user = await updateUser(payload.email, findUser.confirmationCode) 
+    return user
+
+  } catch (err: any) {
+    const error = new Error(err.message);
+    logger.error(error);
+    return {
+      msg: err.message,
+    };
+ 
+}
+}
+export const LoginUser = async (payload: loginDTO) => {
   try {
     const findUser = await findUnique(payload.email);
     if (!findUser) {
+      return {
+        ok: false,
+        status: StatusCodes.BAD_REQUEST,
+        msg: messages.INCORRECT_DETAIL,
+      };
+    }
+
+    const verifyPassword = await CompareHashed(
+      payload.password,
+      findUser.password
+    );
+    if (!verifyPassword) {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
@@ -104,17 +149,6 @@ export const LoginUser = async (payload: any) => {
         ok: false,
         status: StatusCodes.UNAUTHORIZED,
         msg: messages.EMAIL_NOT_VERIFIED,
-      };
-    }
-    const verifyPassword = await CompareHashed(
-      payload.password,
-      findUser.password
-    );
-    if (!verifyPassword) {
-      return {
-        ok: false,
-        status: StatusCodes.BAD_REQUEST,
-        msg: messages.INCORRECT_DETAIL,
       };
     }
     const getToken = await accessToken(findUser);

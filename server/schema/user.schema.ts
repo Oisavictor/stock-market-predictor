@@ -30,6 +30,7 @@ export const verifyUserOTPSchema = object({
        })
     })
 })
+
 export const LoginSchema = object({
     body: object({
       email: string({

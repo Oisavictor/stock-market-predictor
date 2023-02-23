@@ -1,4 +1,5 @@
 import * as express from "express";
+
 export const Routes = (router: any) => {
 
   router.get("/healthCheck", (req, res, next) => {

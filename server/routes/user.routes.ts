@@ -1,9 +1,11 @@
 import * as express from "express";
 import {AuthUser} from '../middleware/auth/auth'
 import { validateResource } from "../resources/validateResources";
+const api = '/api/user';
 import {
   createUserController,
   verifyUserByOTP,
+  resendOTp,
   loginUser,
 } from "../controller/User.controller";
 import { getStockPrice } from "../controller/StockPriceController";
@@ -11,17 +13,19 @@ import { createUserSchema, verifyUserOTPSchema, LoginSchema} from "../schema/use
 
 export const UserRoutes = (router: any) => {
   router.post(
-    "/api/user/create",
+    `${api}/create`,
     validateResource(createUserSchema),
     createUserController
   );
 
   router.post(
-    "/api/verify",
+    `${api}/verify`,
     validateResource(verifyUserOTPSchema),
     verifyUserByOTP
   );
-  router.post("/api/user/login", 
+  router.post(`${api}/resend`, 
+  resendOTp)
+  router.post(`${api}/login`, 
   validateResource(LoginSchema),
   loginUser
   )

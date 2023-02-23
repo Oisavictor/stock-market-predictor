@@ -23,9 +23,9 @@ export const AuthUser = async(req, res, next) => {
         }
     }
     req.user = {
-        id: userToken.token.id,
+        id: userToken.token.uniqueId,
         name : userToken.token.name,
-        email : userToken.token.email,
+        email : userToken.token.email, 
 
     }
     next()
