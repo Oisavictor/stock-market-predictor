@@ -5,7 +5,7 @@ import {
     } from "http-status-codes";
 export const createUserController = async(req, res, next): Promise<Object> => 
 {
-      const user = await createUser(req.body) 
+      const user = await createUser(req.body)
       return res.status( StatusCodes.CREATED).json({...user})
 }
 export const verifyUserByOTP = async(req, res, next) => {
