@@ -12,12 +12,13 @@ datasource db {
 
 model User {
   id                   Int      @id @default(autoincrement())
+  uniqueId             String?  @default(uuid())
   createdAt            DateTime @default(now())
   email                String   @unique
-  name                 String?
-  password             String?
-  passwordConfirmation String?
-  confirmationCode     String?  @default("")
+  name                 String
+  password             String
+  passwordConfirmation String
+  confirmationCode     String  @default("")
   isVerified           Boolean  @default(false)
   role                 Role     @default(USER)
 }
