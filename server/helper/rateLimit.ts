@@ -1,3 +1,5 @@
+import * as express from 'express'
+const app = express()
 import { rateLimit } from 'express-rate-limit';
 export const apiLimiter = rateLimit ({
 	windowMs: 1 * 60 * 1000, // 1 minutes
@@ -6,4 +8,5 @@ export const apiLimiter = rateLimit ({
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });
 
+app.use(apiLimiter)
 

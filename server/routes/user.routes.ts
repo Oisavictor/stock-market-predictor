@@ -1,6 +1,7 @@
 import * as express from "express";
 import { AuthUser } from "../middleware/auth/auth";
 import { validateResource } from "../resources/validateResources";
+import { apiLimiter } from '../helper/rateLimit';
 const api = "/api/user";
 import {
   createUserController,
@@ -13,23 +14,26 @@ import {
   createUserSchema,
   verifyUserOTPSchema,
   LoginSchema,
+  apiLimiter
 } from "../schema/user.schema";
 
 export const UserRoutes = (router: any) => {
   router.post(
     `${api}/create`,
     validateResource(createUserSchema),
-    createUserController
+    createUserController,
+    apiLimiter
   );
 
   router.post(
     "${api}/verify",
     validateResource(verifyUserOTPSchema),
-    verifyUserByOTP
+    verifyUserByOTP,
+    apiLimiter
   );
 
-  router.post(`${api}/resend`, resendOTp);
-  router.post(`${api}/login`, validateResource(LoginSchema), loginUser);
+  router.post(`${api}/resend`, resendOTp, apiLimiter);
+  router.post(`${api}/login`, validateResource(LoginSchema), loginUser, apiLimiter);
   router.get("/welcome", AuthUser, (req, res, next) => {
     return res.status(200).json(req.user);
   });
