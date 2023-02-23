@@ -8,7 +8,7 @@ import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
 import { emailTemplete } from "../templete/emailTemplete";
 import {registerDTO, loginDTO, verifyUserDTO} from '../dto//user.dto'
-export const createUser = async (payload: registerDTO) => {
+export const createUser = async (payload: any) => {
   try {
     const user = await findUnique(payload.email);
     if (user) {

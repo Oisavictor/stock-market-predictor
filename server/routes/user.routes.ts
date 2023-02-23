@@ -14,7 +14,6 @@ import {
   createUserSchema,
   verifyUserOTPSchema,
   LoginSchema,
-  apiLimiter
 } from "../schema/user.schema";
 
 export const UserRoutes = (router: any) => {
