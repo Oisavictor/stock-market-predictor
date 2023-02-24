@@ -2,6 +2,7 @@ import * as express from "express";
 import { AuthUser } from "../middleware/auth/auth";
 import { validateResource } from "../resources/validateResources";
 import { apiLimiter } from '../helper/rateLimit';
+import { cronJobber } from '../worker/cron/cronWorker'
 const api = "/api/user";
 import {
   createUserController,
@@ -36,5 +37,8 @@ export const UserRoutes = (router: any) => {
   router.get("/welcome", AuthUser, (req, res, next) => {
     return res.status(200).json(req.user);
   });
+  router.get('/cron', cronJobber, () => {
+      console.log("wronking")
+  })
   router.get("/api/:symbol", getStockPrice);
 };

@@ -19,6 +19,7 @@
     "express-session": "^1.17.3",
     "finnhub": "^1.2.16",
     "http-status-codes": "^2.2.0",
+    "joi": "^17.8.3",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "node-cron": "^3.0.2",
@@ -37,7 +38,9 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node server.js",
-    "dev2": "ts-node-dev --respawn --transpile-only server.ts"
+    "dev": "ts-node-dev --respawn --transpile-only server.ts",
+    "migrate" : "npx prisma migrate dev --name=init",
+    "studio" : "npx prisma studoi"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
