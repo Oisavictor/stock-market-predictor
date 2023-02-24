@@ -30,6 +30,7 @@ export const ExpressConnection = async() => {
     }))
     // app.use('/', router);
     await connectPrisma()
+
     app.use('/api', apiLimiter)
     Routes(app)
     UserRoutes(app)

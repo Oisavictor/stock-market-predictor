@@ -18,8 +18,9 @@ model User {
   name                 String
   password             String
   passwordConfirmation String
-  confirmationCode     String  @default("")
+  confirmationCode     String   @default("")
   isVerified           Boolean  @default(false)
+  otp_expired          Boolean  @default(false)
   role                 Role     @default(USER)
 }
 

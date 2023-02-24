@@ -7,10 +7,19 @@ import { logger } from "../middleware/logger";
 import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
 import { emailTemplete } from "../templete/emailTemplete";
+import { UserValidator } from '../schema/joiSchema'
 import {registerDTO, loginDTO, verifyUserDTO} from '../dto//user.dto'
-export const createUser = async (payload: any) => {
+export const createUser = async (payload: registerDTO) => {
   try {
-    const user = await findUnique(payload.email);
+    const { error, value} = UserValidator(payload)
+    if(error) {
+      return {
+        ok  : false, 
+        status: StatusCodes.BAD_REQUEST,
+        msg: error.message
+      }
+    }
+    const user = await findUnique(value.email);
     if (user) {
       return {
         ok: false,
@@ -19,7 +28,7 @@ export const createUser = async (payload: any) => {
       };
     }
     const OTP = generateOTP(4);
-    const SendEmail = await emailTemplete(payload.email, OTP);
+    const SendEmail = await emailTemplete(value.email, OTP);
     if (!SendEmail) {
       return {
         ok: false,
@@ -28,10 +37,10 @@ export const createUser = async (payload: any) => {
       };
     }
     const confirmationCode = await hash(OTP.toString());
-    payload.password = await hash(payload.password);
-    payload.passwordConfirmation = payload.password;
+    value.password = await hash(value.password);
+    value.passwordConfirmation = value.password;
     const createUser = await prisma.user.create({
-      data: { confirmationCode, ...payload },
+      data: { confirmationCode, ...value },
     });
     console.log(createUser);
 
