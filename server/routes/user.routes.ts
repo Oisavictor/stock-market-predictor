@@ -30,7 +30,7 @@ export const UserRoutes = (router: any) => {
     validateResource(verifyUserOTPSchema),
     verifyUserByOTP,
     apiLimiter
-  );
+  );    
 
   router.post(`${api}/resend`, resendOTp, apiLimiter);
   router.post(`${api}/login`, validateResource(LoginSchema), loginUser, apiLimiter);
