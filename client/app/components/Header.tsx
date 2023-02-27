@@ -4,7 +4,10 @@ import logo from '../assets/logo.svg'
 export default function Header() {
   return (
     <header className='py-6 px-6 bg-white flex flex-row justify-between'>
-      <Image src={logo} alt='logo'/>
+      <div className='mr-60'>
+        <Image src={logo} alt='logo'/>
+      </div>
+      
       <ul className='text-black flex flex-row justify-evenly mt-3 ml-20 flex-1'>
         <li>About</li>
         <li>Features</li>
