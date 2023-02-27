@@ -12,8 +12,8 @@ export default function Header() {
         <li>Contact</li>
       </ul>
       <div className='flex flex-row justify-between'> 
-        <button className='text-black border-2 border-blue-600 w-30 px-6 mr-10 rounded-lg' >Log in</button>
-        <button className='bg-blue-600 w-30 px-6 rounded-lg'>sign up</button>
+        <button className='text-black border-2 border-blue-600 w-30 px-6 mr-10 rounded-lg font-bold' >Log in</button>
+        <button className='bg-blue-600 w-30 px-6 rounded-lg font-bold text-white'>sign up</button>
       </div>
     </header>
   )
