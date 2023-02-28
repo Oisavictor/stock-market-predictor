@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   id                   Int      @id @default(autoincrement())
-  uniqueId             String?  @default(uuid())
+  uniqueId             String  @unique @default(uuid())
   createdAt            DateTime @default(now())
   email                String   @unique
   name                 String
@@ -20,9 +20,13 @@ model User {
   passwordConfirmation String
   confirmationCode     String   @default("")
   isVerified           Boolean  @default(false)
+  expirer_date         DateTime @default(now())
+  reset_password       String   @default("")
   otp_expired          Boolean  @default(false)
   role                 Role     @default(USER)
+  
 }
+
 
 enum Role {
   USER

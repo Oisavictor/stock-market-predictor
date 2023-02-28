@@ -2,6 +2,7 @@
 import * as express from "express";
 import * as cors from 'cors'
 import * as config from 'config'
+import * as cookieParser from 'cookie-parser'
 //Logger is called here
 import { logger } from "./middleware/logger";
 //All routes file is called here
@@ -25,8 +26,10 @@ export const ExpressConnection = async() => {
     const PORT = config.get<number>('PORT')
     const app = express()
     app.use(express.json());
+    app.use(cookieParser())
     app.use(cors({
-      origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:4200']
+      origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:4200'],
+      credentials: true
     }))
     // app.use('/', router);
     await connectPrisma()
