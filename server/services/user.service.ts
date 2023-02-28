@@ -105,7 +105,7 @@ export const resendOTP = async (payload: any) => {
   try {
     const { email } = payload;
     const findUser = await findUnique(email);
-    if (findUser.isVerified === true || findUser.otp_expired != true) {
+    if (findUser.isVerified === true) {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
@@ -122,7 +122,7 @@ export const resendOTP = async (payload: any) => {
       };
     }
     findUser.confirmationCode = await hash(OTP.toString());
-    const user = await updateUser(payload.email, findUser.confirmationCode);
+    await updateUser(payload.email, findUser.confirmationCode); 
     return {msg : 'Check your email for verification code'};;
   } catch (err: any) {
     const error = new Error(err.message);

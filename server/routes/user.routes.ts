@@ -48,4 +48,4 @@ export const UserRoutes = (router: any) => {
     return res.status(200).json(req.user);
    } )
   router.get("/api/:symbol", getStockPrice);
-};
+}; 
