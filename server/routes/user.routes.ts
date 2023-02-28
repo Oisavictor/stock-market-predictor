@@ -1,20 +1,25 @@
 import * as express from "express";
-import { AuthUser } from "../middleware/auth/auth";
+import { AuthUser, refreshTokenAuthentication  } from "../middleware/auth/auth";
 import { validateResource } from "../resources/validateResources";
 import { apiLimiter } from '../helper/rateLimit';
-import { cronJobber } from '../worker/cron/cronWorker'
 const api = "/api/user";
 import {
   createUserController,
   verifyUserByOTP,
   resendOTp,
   loginUser,
+  forgottenPasswordController,
+  forgottenPasswordController,
+  confirmController,
+  ChangePassword
+
 } from "../controller/User.controller";
 import { getStockPrice } from "../controller/StockPriceController";
 import {
   createUserSchema,
   verifyUserOTPSchema,
   LoginSchema,
+  forgotPasswordSchema
 } from "../schema/user.schema";
 
 export const UserRoutes = (router: any) => {
@@ -26,19 +31,28 @@ export const UserRoutes = (router: any) => {
   );
 
   router.post(
-    "${api}/verify",
+    `${api}/verify`,
     validateResource(verifyUserOTPSchema),
     verifyUserByOTP,
     apiLimiter
   );    
 
   router.post(`${api}/resend`, resendOTp, apiLimiter);
-  router.post(`${api}/login`, validateResource(LoginSchema), loginUser, apiLimiter);
-  router.get("/welcome", AuthUser, (req, res, next) => {
+  router.post(`${api}/login`, validateResource(LoginSchema), loginUser);
+  router.post(`${api}/forget-password`, validateResource(forgotPasswordSchema), forgottenPasswordController)
+  router.post(`${api}/forgot/verify`, confirmController)
+  router.put(`${api}/forgot/change`, ChangePassword)
+  router.get(`${api}/welcome`, AuthUser, (req, res, next) => {
     return res.status(200).json(req.user);
   });
+<<<<<<< Updated upstream
   router.get('/cron', cronJobber, () => {
       console.log("wronking")
   })
+=======
+   router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
+    return res.status(200).json(req.user);
+   } )
+>>>>>>> Stashed changes
   router.get("/api/:symbol", getStockPrice);
 };

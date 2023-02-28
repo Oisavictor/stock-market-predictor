@@ -14,3 +14,8 @@ export class verifyUserDTO {
     confirmationCode: number;
     email : string;
 }
+export class passwordForgottenDTO {
+    email :  string;
+    NewPassword : string;
+    passwordConfirmation: string
+}

@@ -14,6 +14,7 @@ export = {
         PASS:  process.env.SMTP_PASSWORD,
     },
     token:  {
-        ACCESS_TOKEN: process.env.ACCESS_TOKEN
+        ACCESS_TOKEN: process.env.ACCESS_TOKEN,
+        REFRESH_TOKEN: process.env.REFRESH_TOKEN
     }
 }

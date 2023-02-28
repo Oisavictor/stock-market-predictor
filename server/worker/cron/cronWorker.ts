@@ -8,6 +8,7 @@ export const cronJobber = (email: string) => {
          await testing(email)
       });
 
+<<<<<<< Updated upstream
       if(cronJob) {
         cronJob.stop()
       } else {
@@ -40,4 +41,13 @@ export const expireUserOTP = async (payload: string)=>{
     }
 }
     
+=======
+export const cronJobber = async (email: string) => {
+    
+    
+ }
+
+
+  
+>>>>>>> Stashed changes
 
