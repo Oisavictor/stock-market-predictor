@@ -5,7 +5,6 @@ import {
   LoginUser,
   resendOTP,
   forgottenPassword,
-  changeForgotPassword,
   confirmCodeForPassswordConfirmation,
   changePassword
 } from "../services/user.service";

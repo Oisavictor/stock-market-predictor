@@ -45,14 +45,8 @@ export const UserRoutes = (router: any) => {
   router.get(`${api}/welcome`, AuthUser, (req, res, next) => {
     return res.status(200).json(req.user);
   });
-<<<<<<< Updated upstream
-  router.get('/cron', cronJobber, () => {
-      console.log("wronking")
-  })
-=======
    router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
     return res.status(200).json(req.user);
    } )
->>>>>>> Stashed changes
   router.get("/api/:symbol", getStockPrice);
 };

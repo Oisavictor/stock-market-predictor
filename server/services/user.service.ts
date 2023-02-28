@@ -102,17 +102,10 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
 };
 
 export const resendOTP = async (payload: any) => {
-<<<<<<< Updated upstream
-  try{
-    const {email} = payload
-    const findUser = await findUnique(email)
-    if(findUser.confirmationCode != '' || findUser.isVerified === true) {
-=======
   try {
     const { email } = payload;
     const findUser = await findUnique(email);
     if (findUser.isVerified === true || findUser.otp_expired != true) {
->>>>>>> Stashed changes
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
