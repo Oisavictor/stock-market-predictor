@@ -9,7 +9,7 @@ import { StatusCodes } from "http-status-codes";
 import { emailTemplete } from "../templete/emailTemplete";
 import { UserValidator, PasswordValidatorSchema, forgotcodeValidator } from "../schema/joiSchema";
 import { registerDTO, loginDTO, verifyUserDTO, passwordForgottenDTO } from "../dto//user.dto";
-import { cronJobber } from "../worker/cron/cronWorker";
+
 export const createUser = async (payload: registerDTO) => {
   try {
     const { error, value } = UserValidator(payload);
@@ -43,12 +43,8 @@ export const createUser = async (payload: registerDTO) => {
     const createUser = await prisma.user.create({
       data: { confirmationCode, ...value },
     });
-    const result = {
-      email : createUser.email,
-      name : createUser.name,
-      uniqueId : createUser.uniqueId,
-    }
-    return result;
+   
+    return createUser;
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
@@ -91,7 +87,7 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
         isVerified: true,
       },
     });
-     return {msg : 'Verification is successfull'};
+     return {verifyCode};
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
@@ -177,7 +173,7 @@ export const LoginUser = async (payload: loginDTO) => {
 };
 
 // forgotten password
-export const forgottenPassword = async (payload: any) => {
+export const forgottenPassword = async (payload: passwordForgottenDTO) => {
   try{
   const findUser = await findUnique(payload.email);
   if (!findUser) {
