@@ -1,4 +1,4 @@
-//All Dev dependency are called her
+//All Dev dependency are called here
 import * as express from "express";
 import * as cors from 'cors'
 import * as config from 'config'
@@ -35,17 +35,20 @@ export const ExpressConnection = async() => {
     // const csrfProtect = new csrf({ cookie: true })
     app.use(express.json());
     app.use(cookieParser())
-    app.use(session({secret: process.env.SESSION_SECRET, saveUninitialized: true, resave: true, secure}));
+    app.use(session({secret: process.env.SESSION_SECRET, saveUninitialized: true, resave: true}));
     app.use(expressIp().getIpInfoMiddleware)
     app.use(cors({
-      origin: ['http://localhost:3000', 'http://localhost:8080', 'http://localhost:4200'],
+      origin: [
+        'http://localhost:3000', 
+        'http://localhost:8080', 
+        'http://localhost:4200'],
       credentials: true
     }))
     app.use(flash())
     app.use(helmet());
-    app.use(methodOverride('X-HTTP-Method')) //          Microsoft
+    app.use(methodOverride('X-HTTP-Method'))          // Microsoft
     app.use(methodOverride('X-HTTP-Method-Override')) // Google/GData
-    app.use(methodOverride('X-Method-Override')) //      IBM
+    app.use(methodOverride('X-Method-Override'))      // IBM
     app.use(csrfProtection)
     app.use(function (req, res, next) {
       res.locals.csrftoken = req.headers['csrf-token'] 

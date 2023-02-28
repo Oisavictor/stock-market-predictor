@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import * as express from 'express'
+// import * as express from 'express'
 import * as config from 'config'
 const privateKey = config.get<string>('token.ACCESS_TOKEN')
 const publicKey = config.get<string>('token.REFRESH_TOKEN')
