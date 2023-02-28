@@ -43,13 +43,8 @@
     "build": "npx tsc",
     "start": "node server.js",
     "dev": "ts-node-dev --respawn --transpile-only server.ts",
-<<<<<<< Updated upstream
-    "migrate" : "npx prisma migrate dev --name=init",
-    "studio" : "npx prisma studoi"
-=======
     "migrate": "npx prisma migrate dev --name=init",
     "studio": "npx prisma studio"
->>>>>>> Stashed changes
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
