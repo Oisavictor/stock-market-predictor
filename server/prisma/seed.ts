@@ -1,5 +1,6 @@
 import { PrismaClient, User } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+
 const prisma = new PrismaClient();
 const seed = async () => {
   await prisma.user.deleteMany();
@@ -19,6 +20,7 @@ const seed = async () => {
   const users = await Promise.all(User);
   console.log(users);
 };
+
 seed()
   .catch((err) => {
     console.log(err);

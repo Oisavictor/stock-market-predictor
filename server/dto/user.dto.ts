@@ -1,21 +1,21 @@
 export class registerDTO {
-    name  :  string;
-    email :  string;
+    name: string;
+    email: string;
     password: string;
     passwordConfirmation: string;
 }
 
 export class loginDTO {
-    email : string;
+    email: string;
     password: string
 }
 
 export class verifyUserDTO {
     confirmationCode: number;
-    email : string;
+    email: string;
 }
 export class passwordForgottenDTO {
-    email :  string;
-    NewPassword : string;
+    email: string;
+    NewPassword: string;
     passwordConfirmation: string
 }

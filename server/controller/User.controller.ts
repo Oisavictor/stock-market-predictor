@@ -8,7 +8,6 @@ import {
   confirmCodeForPassswordConfirmation,
   changePassword
 } from "../services/user.service";
-
 import { StatusCodes } from "http-status-codes";
 
 export const createUserController = async (req, res, next): Promise<Object> => {
@@ -25,10 +24,10 @@ export const resendOTp = async (req, res, next) => {
 };
 export const loginUser = async (req, res, next) => {
   const user = await LoginUser(req.body);
-  const cookieOption = 
+  const cookieOption =
   {
-      expiresIn : new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
-      httpOnly: true
+    expiresIn: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    httpOnly: true
   }
   res.cookie("cookie", user.refresh_Token, cookieOption)
   return res.status(StatusCodes.OK).json({ ...user });
@@ -40,8 +39,8 @@ export const forgottenPasswordController = async (req, res, next) => {
 };
 
 export const confirmController = async (req, res, next) => {
-    const user  = await confirmCodeForPassswordConfirmation(req.body)
-    return res.status(StatusCodes.OK).json({ ...user });
+  const user = await confirmCodeForPassswordConfirmation(req.body)
+  return res.status(StatusCodes.OK).json({ ...user });
 }
 export const ChangePassword = async (req, res, next) => {
   const user = await changePassword(req.body)

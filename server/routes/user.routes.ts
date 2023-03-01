@@ -1,8 +1,7 @@
 import * as express from "express";
-import { AuthUser, refreshTokenAuthentication  } from "../middleware/auth/auth";
+import { AuthUser, refreshTokenAuthentication } from "../middleware/auth/auth";
 import { validateResource } from "../resources/validateResources";
 import { apiLimiter } from '../helper/rateLimit';
-const api = "/api/user";
 import {
   createUserController,
   verifyUserByOTP,
@@ -11,7 +10,6 @@ import {
   forgottenPasswordController,
   confirmController,
   ChangePassword
-
 } from "../controller/User.controller";
 import { getStockPrice } from "../controller/StockPriceController";
 import {
@@ -20,6 +18,8 @@ import {
   LoginSchema,
   forgotPasswordSchema
 } from "../schema/user.schema";
+
+const api = "/api/user";
 
 export const UserRoutes = (router: any) => {
   router.post(
@@ -34,7 +34,7 @@ export const UserRoutes = (router: any) => {
     validateResource(verifyUserOTPSchema),
     verifyUserByOTP,
     apiLimiter
-  );    
+  );
 
   router.post(`${api}/resend`, resendOTp, apiLimiter);
   router.post(`${api}/login`, validateResource(LoginSchema), loginUser);
@@ -44,8 +44,8 @@ export const UserRoutes = (router: any) => {
   router.get(`${api}/`, AuthUser, (req, res, next) => {
     return  res.status(200).json(req.user);
   });
-   router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
+  router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
     return res.status(200).json(req.user);
-   } )
+  })
   router.get("/api/:symbol", getStockPrice);
 }; 

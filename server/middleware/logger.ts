@@ -1,5 +1,6 @@
-import  pino from 'pino'
+import pino from 'pino'
 import pretty from 'pino-pretty'
+
 //Still working on this
 const stream = pretty({
   colorize: true,

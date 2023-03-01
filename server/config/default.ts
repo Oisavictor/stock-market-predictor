@@ -6,14 +6,16 @@ export = {
         clientID: process.env.CLIENTID,
         clientSecret: process.env.CLIENTSECRET
     },
+
     mailgun: {
         HOST: process.env.SMTP_HOST,
-        PORT:  process.env.SMTP_PORT,
-        SECURE:  process.env.SMTP_SECURE,
-        USER:  process.env.SMTP_USER,
-        PASS:  process.env.SMTP_PASSWORD,
+        PORT: process.env.SMTP_PORT,
+        SECURE: process.env.SMTP_SECURE,
+        USER: process.env.SMTP_USER,
+        PASS: process.env.SMTP_PASSWORD
     },
-    token:  {
+
+    token: {
         ACCESS_TOKEN: process.env.ACCESS_TOKEN,
         REFRESH_TOKEN: process.env.REFRESH_TOKEN,
         COOKIES: process.env.cookies_secret
