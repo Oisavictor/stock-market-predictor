@@ -15,6 +15,7 @@ export = {
     },
     token:  {
         ACCESS_TOKEN: process.env.ACCESS_TOKEN,
-        REFRESH_TOKEN: process.env.REFRESH_TOKEN
+        REFRESH_TOKEN: process.env.REFRESH_TOKEN,
+        COOKIES: process.env.cookies_secret
     }
 }

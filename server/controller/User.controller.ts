@@ -10,6 +10,7 @@ import {
 } from "../services/user.service";
 
 import { StatusCodes } from "http-status-codes";
+
 export const createUserController = async (req, res, next): Promise<Object> => {
   const user = await createUser(req.body);
   return res.status(StatusCodes.CREATED).json({ ...user });
