@@ -23,12 +23,7 @@ export const AuthUser = async(req, res, next) => {
             msg: messages.UNAUTHORIZED    
         }
     }
-    req.user = {
-        id: userToken.token.uniqueId,
-        name : userToken.token.name,
-        email : userToken.token.email, 
-
-    }
+    req.user = userToken
     next()
   } catch (err){
      const  error = new Error(err.message)
@@ -48,18 +43,13 @@ export const refreshTokenAuthentication = async (req, res, next) => {
         msg: messages.UNAUTHORIZED    
     }
      }
-  const access = await accessToken(payload.uniqueId)
+  const access = await accessToken(payload)
   console.log(access)
   res.cookie(access, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000
   });
-  req.user = {
-    id : payload.token.id,
-    uniqueId : payload.token.uniqueId,
-    name: payload.token.name,
-    email: payload.token.email
-  }
+  req.user = access
   next()
    } catch (err) {
     const  error = new Error(err.message)

@@ -5,9 +5,7 @@ export const Routes = (router: any) => {
     res.sendStatus(200);
     next();
   });
-  router.get('/', (req, res) => {
-    res.send("stock_market_predict test");
-  })
+ 
   router.get((req, res, next) => {
     if (res.status(404)) {
       return res.send("When you are trying to get what u don't have ");

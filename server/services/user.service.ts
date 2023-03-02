@@ -87,7 +87,7 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
         isVerified: true,
       },
     });
-     return {verifyCode};
+     return {verifyCode}; 
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
@@ -159,8 +159,6 @@ export const LoginUser = async (payload: loginDTO) => {
     }
     const access_Token = accessToken(findUser);
     const refresh_Token = refreshToken(findUser);
- 
-  
     return {access_Token, refresh_Token} 
    
   } catch (err: any) {

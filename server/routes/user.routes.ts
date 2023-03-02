@@ -41,8 +41,8 @@ export const UserRoutes = (router: any) => {
   router.post(`${api}/forget-password`, validateResource(forgotPasswordSchema), forgottenPasswordController)
   router.post(`${api}/forgot/verify`, confirmController)
   router.put(`${api}/forgot/change`, ChangePassword)
-  router.get(`${api}/welcome`, AuthUser, (req, res, next) => {
-    return res.status(200).json(req.user);
+  router.get(`${api}/`, AuthUser, (req, res, next) => {
+    return  res.status(200).json(req.user);
   });
    router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
     return res.status(200).json(req.user);
