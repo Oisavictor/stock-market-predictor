@@ -59,7 +59,10 @@ export const ExpressConnection = async() => {
     app.use('/api', apiLimiter) 
     UserRoutes(app)
     Routes(app)
+
     await connectPrisma()
+    
+    // Listen for requests on localhost.
     app.listen(PORT, () => {
       logger.info(`app is been listen to on http://localhost:${PORT}`)
       }

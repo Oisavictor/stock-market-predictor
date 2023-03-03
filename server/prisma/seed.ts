@@ -9,10 +9,15 @@ const seed = async () => {
   for (let i = 0; i < 20; i++) {
     User.push(
       prisma.user.create({
-        data: {
+        _data: {
           name: faker.name.fullName(),
           email: faker.internet.email(),
-
+        },
+        get data() {
+          return this._data;
+        },
+        set data(value) {
+          this._data = value;
         },
       })
     );

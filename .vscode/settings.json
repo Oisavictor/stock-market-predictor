@@ -1,0 +1,6 @@
+{
+    "docify.commentService.programmingLanguage": "javascript",
+    "docify.commentService.docstringFormat": "Custom",
+    "docify.commentService.sidePanelReviewMode": true,
+    "docify.translateService.docstringFormat": "Custom"
+}
