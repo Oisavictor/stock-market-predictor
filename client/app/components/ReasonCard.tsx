@@ -1,13 +1,14 @@
 import Image from 'next/image'
-import profits from '../assets/profits.svg'
 
-export default function ReasonCard() {
+
+export default function ReasonCard({reason, icon, message, color, margin}) {
   return (
-    <div className=''>
+    <div className={`${color} p-10 w-60 rounded-xl ${margin} h-fit`}>
         <div>
-          <Image src={profits} alt='logo'/>
+          <Image src={icon} alt='logo'/>
         </div>
-        <p>increased profits</p>
+        <p className='font-bold mb-3'>{reason}</p>
+        <p className={`w-full text-sm`}>{message}</p>
     </div>
   )
 }
