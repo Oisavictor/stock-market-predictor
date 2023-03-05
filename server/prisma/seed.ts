@@ -4,25 +4,29 @@ import { faker } from "@faker-js/faker";
 const prisma = new PrismaClient();
 const seed = async () => {
   await prisma.user.deleteMany();
-  const User: Array<Promise<any>> = [];
+  const user: User[] = [];
 
   for (let i = 0; i < 20; i++) {
-    User.push(
-      prisma.user.create({
-        _data: {
-          name: faker.name.fullName(),
-          email: faker.internet.email(),
-        },
-        get data() {
-          return this._data;
-        },
-        set data(value) {
-          this._data = value;
-        },
-      })
+    user.push(
+        await prisma.user.create({
+            data: {
+                id: faker.datatype.number(),
+                uniqueId: faker.datatype.uuid(),
+                createdAt: faker.date.past(),
+                email: faker.internet.email(),
+                name: faker.name.fullName(),
+                password: faker.internet.password(),
+                passwordConfirmation: faker.internet.password(),
+                confirmationCode: faker.datatype.uuid(),
+                isVerified: faker.helpers.arrayElement([true, false]),
+                expirer_date: faker.date.birthdate(),
+                reset_password: '1223',
+                otp_expired: faker.helpers.arrayElement([true, false]),
+            },
+        })
     );
   }
-  const users = await Promise.all(User);
+  const users = await Promise.all(user);
   console.log(users);
 };
 

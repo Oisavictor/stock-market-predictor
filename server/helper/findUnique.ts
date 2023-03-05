@@ -5,7 +5,7 @@ export const findUnique = async (data: any) => {
   return findUnique;
 };
 
-export const updateUser = async (data: any, updateData) => {
+export const updateUser = async (data: any, updateData: string) => {
   const updateUnique = await prisma.user.update({
     where: { email: data },
     data: updateData,

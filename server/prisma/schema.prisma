@@ -23,8 +23,6 @@ model User {
   expirer_date         DateTime @default(now())
   reset_password       String   @default("")
   otp_expired          Boolean  @default(false)
-  role                 Role     @default(USER)
-  
 }
 
 
