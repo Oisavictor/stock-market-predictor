@@ -18,10 +18,11 @@ import { connectPrisma } from "./connectPrisma";
 //Express connection  
 import rateLimit from 'express-rate-limit'
 import { boolean } from "joi";
-// const csrf = require("csurf");
-// const csrfProtection:any = () => csrf({
-//   cookie: true,
-// });
+const csrf = require("csurf");
+
+const csrfProtection:any = () => csrf({
+  cookie: true,
+});
 
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
@@ -34,11 +35,11 @@ const apiLimiter = rateLimit({
 export const ExpressConnection = async() => {
     const PORT = config.get<number>('PORT')
     const app = express();
-
+    let csrf = require('lusca').csrf;
     app.use(express.json());
     app.use(cookieParser());
     app.use(session({secret: process.env.SESSION_SECRET, saveUninitialized: true, resave: true, cookie: { secure: true }}));
-    // app.use(csrfProtection());
+    app.use(csrfProtection());
     app.use(expressIp().getIpInfoMiddleware)
     app.use(cors({
       origin: [
@@ -52,6 +53,7 @@ export const ExpressConnection = async() => {
     app.use(methodOverride('X-HTTP-Method'))          // Microsoft
     app.use(methodOverride('X-HTTP-Method-Override')) // Google/GData
     app.use(methodOverride('X-Method-Override'))      // IBM
+    app.use(csrf());
     
     // app.use((req, res, next) => {
     //   const token = req.cookies();
