@@ -17,10 +17,12 @@ import {UserRoutes} from './routes/user.routes'
 import { connectPrisma } from "./connectPrisma";
 //Express connection  
 import rateLimit from 'express-rate-limit'
-const csrf = require("csurf");
-const csrfProtection = csrf({
-  cookie: true,
-});
+import { boolean } from "joi";
+// const csrf = require("csurf");
+// const csrfProtection:any = () => csrf({
+//   cookie: true,
+// });
+
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes
 	max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
@@ -31,11 +33,12 @@ const apiLimiter = rateLimit({
 // Apply the rate limiting middleware to API calls only
 export const ExpressConnection = async() => {
     const PORT = config.get<number>('PORT')
-    const app = express()
-    // const csrfProtect = new csrf({ cookie: true })
+    const app = express();
+
     app.use(express.json());
-    app.use(cookieParser())
-    app.use(session({secret: process.env.SESSION_SECRET, saveUninitialized: true, resave: true}));
+    app.use(cookieParser());
+    app.use(session({secret: process.env.SESSION_SECRET, saveUninitialized: true, resave: true, cookie: { secure: true }}));
+    // app.use(csrfProtection());
     app.use(expressIp().getIpInfoMiddleware)
     app.use(cors({
       origin: [
@@ -49,12 +52,14 @@ export const ExpressConnection = async() => {
     app.use(methodOverride('X-HTTP-Method'))          // Microsoft
     app.use(methodOverride('X-HTTP-Method-Override')) // Google/GData
     app.use(methodOverride('X-Method-Override'))      // IBM
-    app.use(csrfProtection)
-    app.use(function (req, res, next) {
-      res.locals.csrftoken = req.headers['csrf-token'] 
-      res.locals.currentUser = req.user;
-      next();
-    })
+    
+    // app.use((req, res, next) => {
+    //   const token = req.cookies();
+    //   res.cookie('XSRF-TOKEN', token);
+    //   res.locals.csrfToken = token;
+      // next();
+    // })
+
     // app.use('/', router);
     app.use('/api', apiLimiter) 
     UserRoutes(app)

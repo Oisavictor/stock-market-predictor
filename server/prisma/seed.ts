@@ -20,7 +20,7 @@ const seed = async () => {
                 confirmationCode: faker.datatype.uuid(),
                 isVerified: faker.helpers.arrayElement([true, false]),
                 expirer_date: faker.date.birthdate(),
-                reset_password: '1223',
+                reset_password: faker.datatype.hexadecimal(),
                 otp_expired: faker.helpers.arrayElement([true, false]),
             },
         })
