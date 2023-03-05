@@ -43,9 +43,12 @@ export const UserRoutes = (router: any) => {
   router.put(`${api}/forgot/change`, ChangePassword)
   router.get(`${api}/`, AuthUser, (req, res, next) => {
     return  res.status(200).json(req.user);
+
   });
    router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
     return res.status(200).json(req.user);
+      
    } )
   router.get("/api/:symbol", getStockPrice);
+  
 }; 

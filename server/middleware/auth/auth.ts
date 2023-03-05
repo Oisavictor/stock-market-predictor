@@ -1,5 +1,6 @@
 import * as express from 'express'
 import  { logger } from '../logger'
+import { get } from 'lodash'
 import {StatusCodes} from "http-status-codes";
 import { accessToken, refreshToken } from "../../helper/jwtToken";
 import messages from "../../utils/errorMessage";
@@ -25,6 +26,7 @@ export const AuthUser = async(req, res, next) => {
     }
     req.user = userToken
     next()
+
   } catch (err){
      const  error = new Error(err.message)
      logger.error(error)

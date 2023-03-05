@@ -29,6 +29,7 @@
     "http-status-codes": "^2.2.0",
     "joi": "^17.8.3",
     "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21",
     "lusca": "^1.7.0",
     "method-override": "^3.0.0",
     "moment": "^2.29.4",
