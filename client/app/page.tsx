@@ -1,9 +1,11 @@
-import styles from './page.module.css'
+import Hero from "./components/Hero";
+import Reason from "./components/Reason";
 
 export default function Home() {
   return (
-    <main className='h-100vl'>
-      <p className='bg-black text-5xl font-bold '>the body</p>
+    <main  className='bg-white'>
+      <Hero/>
+      <Reason/>
     </main>
   )
 }
