@@ -37,7 +37,7 @@ export const UserRoutes = (router: any) => {
   );
 
   router.post(`${api}/resend`, resendOTp, apiLimiter);
-  router.post(`${api}/login`, validateResource(LoginSchema), loginUser);
+  router.post(`${api}/login`, validateResource(LoginSchema), loginUser, apiLimiter);
   router.post(`${api}/forget-password`, validateResource(forgotPasswordSchema), forgottenPasswordController)
   router.post(`${api}/forgot/verify`, confirmController)
   router.put(`${api}/forgot/change`, ChangePassword)
