@@ -131,6 +131,7 @@ export const resendOTP = async (payload: any) => {
     };
   }
 };
+
 export const LoginUser = async (payload: loginDTO) => {
   try {
     const findUser = await findUnique(payload.email);
@@ -256,7 +257,7 @@ export const changePassword = async (payload) => {
       };
   }
   const NewPassword = await hash(payload.NewPassword)
- const changePassword = await prisma.user.update({where: {email : findUser.email}, data : {
+    const changePassword = await prisma.user.update({where: {email : findUser.email}, data : {
          password: NewPassword,
          passwordConfirmation: ''
    }})
@@ -279,7 +280,7 @@ const SCOPES = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.g
 
 const client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
-export const googleAuth = async (payload) => {
+export const googleAuth = async (payload: any) => {
 const getAuthUrl = () => {
   const authUrl = client.generateAuthUrl({
     access_type: 'offline',
