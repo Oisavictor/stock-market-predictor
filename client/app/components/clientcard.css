@@ -1,0 +1,3 @@
+.clientcard-container::-webkit-scrollbar {
+    display: none;
+}
