@@ -175,7 +175,7 @@ export const LoginUser = async (payload: loginDTO) => {
       msg: err.message,
     };
   }
-};
+}; 
 
 // forgotten password
 export const forgottenPassword = async (payload: passwordForgottenDTO) => {
