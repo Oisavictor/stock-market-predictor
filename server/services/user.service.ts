@@ -181,7 +181,7 @@ export const LoginUser = async (payload: loginDTO) => {
 export const forgottenPassword = async (payload: passwordForgottenDTO) => {
   try{
   const findUser = await findUnique(payload.email);
-  if (!findUser) {
+  if (!findUser || findUser.isVerified === false) {
     return {
       ok: false,
       status: StatusCodes.UNAUTHORIZED,
