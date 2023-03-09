@@ -17,14 +17,13 @@ import { UserRoutes } from "./routes/user.routes";
 import { connectPrisma } from "./connectPrisma";
 //Express connection
 import rateLimit from "express-rate-limit";
-// const csrf = require("csurf");
-
+const csrf = require("csurf");
 // Apply the rate limiting middleware to API calls only
 export const ExpressConnection = async () => {
-  // const csrfProtection = csrf({
-  //   cookie: true,
-  //   secure: true,
-  // });
+  const csrfProtection = csrf({
+    cookie: true,
+    secure: true,
+  });
   const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
@@ -32,14 +31,15 @@ export const ExpressConnection = async () => {
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   });
   const PORT = config.get<number>("PORT");
+  const secrets = config.get<string>("COOKIES");
   const app = express();
-  // app.set('trust proxy', 1)
+  app.set('trust proxy', 1)
   // const csrfProtect = new csrf({ cookie: true })
   app.use(express.json());
   app.use(cookieParser());
   app.use(
     session({
-      secret: process.env.SESSION_SECRET,
+      secret: secrets,
       saveUninitialized: true,
       resave: true,
       cookie: { secure: true },
@@ -62,11 +62,10 @@ export const ExpressConnection = async () => {
   app.use(methodOverride("X-HTTP-Method")); //          Microsoft
   app.use(methodOverride("X-HTTP-Method-Override")); // Google/GData
   app.use(methodOverride("X-Method-Override")); //      IBM
-  // app.use(csrfProtection);
+  app.use(csrfProtection);
   app.use(function (req, res, next) {
     // const myToken = req.csrfToken()
-    res.locals.csrftoken = req.headers["csrf-token"];
-    // console.log(myToken)
+    res.locals.csrftoken = req.headers["csrf-token"]; 
     next();
   });
   // app.use('/', router);

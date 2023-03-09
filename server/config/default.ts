@@ -2,6 +2,7 @@ import '../utils/dotEnv';
 
 export = {
     PORT: process.env.PORT || '4000',
+    COOKIES: process.env.COOKIES_SECRET,
     google_auth: {
         clientID: process.env.CLIENTID,
         clientSecret: process.env.CLIENTSECRET
@@ -9,8 +10,6 @@ export = {
 
     mailgun: {
         HOST: process.env.SMTP_HOST,
-        PORT: process.env.SMTP_PORT,
-        SECURE: process.env.SMTP_SECURE,
         USER: process.env.SMTP_USER,
         PASS: process.env.SMTP_PASSWORD
     },

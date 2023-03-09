@@ -1169,6 +1169,13 @@
   "resolved" "https://registry.npmjs.org/@types/node/-/node-18.11.18.tgz"
   "version" "18.11.18"
 
+"@types/open@^6.2.1":
+  "integrity" "sha512-CzV16LToFaKwm1FfplVTF08E3pznw4fQNCQ87N+A1RU00zu/se7npvb6IC9db3/emnSThQ6R8qFKgrei2M4EYQ=="
+  "resolved" "https://registry.npmjs.org/@types/open/-/open-6.2.1.tgz"
+  "version" "6.2.1"
+  dependencies:
+    "open" "*"
+
 "@types/passport-google-oauth2@^0.1.5":
   "integrity" "sha512-naBOrmo8IC6nVb565nKD5S3BCQTIOlGQP7HkDyLJ3taujG9O33Obi0chQa4PtXz82kPSdC7zoBd50hBVQVojtA=="
   "resolved" "https://registry.npmjs.org/@types/passport-google-oauth2/-/passport-google-oauth2-0.1.5.tgz"
@@ -3012,7 +3019,7 @@
   dependencies:
     "wrappy" "1"
 
-"open@^8.4.2":
+"open@*", "open@^8.4.2":
   "integrity" "sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ=="
   "resolved" "https://registry.npmjs.org/open/-/open-8.4.2.tgz"
   "version" "8.4.2"
