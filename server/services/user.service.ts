@@ -121,7 +121,10 @@ export const resendOTP = async (payload: any) => {
       };
     }
     findUser.confirmationCode = await hash(OTP.toString());
-    await updateUser(payload.email, findUser.confirmationCode); 
+    const code = findUser.confirmationCode 
+    await prisma.user.update({where: {email: email}, data : {
+      confirmationCode : code
+  }}); 
     return {msg : 'Check your email for verification code'};;
   } catch (err: any) {
     const error = new Error(err.message);
