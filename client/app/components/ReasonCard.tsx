@@ -1,14 +1,14 @@
 import Image from 'next/image'
 
 
-export default function ReasonCard({reason, icon, message, color, margin}) {
+export default function ReasonCard(props:{reason:string, icon:string, message:string, color:string, margin:string}) {
   return (
-    <div className={`${color} p-10 w-60 rounded-xl ${margin} h-fit`}>
+    <div className={`${props.color} p-10 w-60 rounded-xl ${props.margin} h-fit`}>
         <div>
-          <Image src={icon} alt='logo'/>
+          <Image src={props.icon} alt='logo'/>
         </div>
-        <p className='font-bold mb-3'>{reason}</p>
-        <p className={`w-full text-sm`}>{message}</p>
+        <p className='font-bold mb-3'>{props.reason}</p>
+        <p className={`w-full text-sm`}>{props.message}</p>
     </div>
   )
 }
