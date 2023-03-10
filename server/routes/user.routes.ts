@@ -41,11 +41,16 @@ export const UserRoutes = (router: any) => {
   router.post(`${api}/forget-password`, validateResource(forgotPasswordSchema), forgottenPasswordController)
   router.post(`${api}/forgot/verify`, confirmController)
   router.put(`${api}/forgot/change`, ChangePassword)
-  router.get(`${api}/`, AuthUser, (req, res, next) => {
-    return  res.status(200).json(req.user);
+  router.get(`${api}/portal`, AuthUser, (req, res, next) => {
+    return res.status(200).json(req.user);
   });
   router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
     return res.status(200).json(req.user);
   })
   router.get("/api/:symbol", getStockPrice);
+  router.delete(`${api}/logout`, refreshTokenAuthentication, function(req, res, next) {
+  const cook = res.clearCookie('connect.sid', '', {expires: new Date(1), path: '/' });
+  console.log(cook)
+ return res.status(403).status({ ok: true, msg: 'Logout'}); 
+}); 
 }; 

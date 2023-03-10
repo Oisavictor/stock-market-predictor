@@ -7,11 +7,20 @@ import { logger } from "../middleware/logger";
 import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
 import { emailTemplete } from "../templete/emailTemplete";
-import { UserValidator, PasswordValidatorSchema, forgotcodeValidator } from "../schema/joiSchema";
-import { registerDTO, loginDTO, verifyUserDTO, passwordForgottenDTO } from "../dto//user.dto";
-import { OAuth2Client } from 'google-auth-library';
-import { google } from 'googleapis';
-import { open } from 'open';
+import {
+  UserValidator,
+  PasswordValidatorSchema,
+  forgotcodeValidator,
+} from "../schema/joiSchema";
+import {
+  registerDTO,
+  loginDTO,
+  verifyUserDTO,
+  passwordForgottenDTO,
+} from "../dto//user.dto";
+import { OAuth2Client } from "google-auth-library";
+import { google } from "googleapis";
+// import { open } from 'open';
 
 export const createUser = async (payload: registerDTO) => {
   try {
@@ -42,11 +51,11 @@ export const createUser = async (payload: registerDTO) => {
     }
     const confirmationCode = await hash(OTP.toString());
     value.password = await hash(value.password);
-    value.passwordConfirmation = '';
+    value.passwordConfirmation = "";
     const createUser = await prisma.user.create({
       data: { confirmationCode, ...value },
     });
-   
+
     return createUser;
   } catch (err: any) {
     const error = new Error(err.message);
@@ -81,7 +90,7 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
       };
     }
     //update the confirmation code to be empty and isVerified to be true
-    const verifyCode = await prisma.user.update({
+    const Result = await prisma.user.update({
       where: {
         email: payload.email,
       },
@@ -90,7 +99,7 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
         isVerified: true,
       },
     });
-     return {verifyCode}; 
+    return { Result };
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
@@ -121,11 +130,14 @@ export const resendOTP = async (payload: any) => {
       };
     }
     findUser.confirmationCode = await hash(OTP.toString());
-    const code = findUser.confirmationCode 
-    await prisma.user.update({where: {email: email}, data : {
-      confirmationCode : code
-  }}); 
-    return {msg : 'Check your email for verification code'};;
+    const code = findUser.confirmationCode;
+    await prisma.user.update({
+      where: { email: email },
+      data: {
+        confirmationCode: code,
+      },
+    });
+    return { msg: "Check your email for verification code" };
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
@@ -166,8 +178,7 @@ export const LoginUser = async (payload: loginDTO) => {
     }
     const access_Token = accessToken(findUser);
     const refresh_Token = refreshToken(findUser);
-    return {access_Token, refresh_Token} 
-   
+    return { access_Token, refresh_Token };
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
@@ -175,166 +186,190 @@ export const LoginUser = async (payload: loginDTO) => {
       msg: err.message,
     };
   }
-}; 
+};
 
 // forgotten password
 export const forgottenPassword = async (payload: passwordForgottenDTO) => {
-  try{
-  const findUser = await findUnique(payload.email);
-  if (!findUser || findUser.isVerified === false) {
+  try {
+    const findUser = await findUnique(payload.email);
+    if (!findUser || findUser.isVerified === false) {
+      return {
+        ok: false,
+        status: StatusCodes.UNAUTHORIZED,
+        msg: messages.INVAILD_USER_REQUEST,
+      };
+    }
+    const OTP = generateOTP(4);
+    const SendEmail = await emailTemplete(payload.email, OTP);
+    if (!SendEmail) {
+      return {
+        ok: false,
+        status: StatusCodes.REQUEST_TIMEOUT,
+        msg: messages.FAILED_EMAIL,
+      };
+    }
+    const ResetCode = await hash(OTP.toString());
+    await prisma.user.update({
+      where: {
+        email: payload.email,
+      },
+      data: {
+        reset_password: ResetCode,
+      },
+    });
+  } catch (err: any) {
+    const error = new Error(err.message);
+    logger.error(error);
     return {
-      ok: false,
-      status: StatusCodes.UNAUTHORIZED,
-      msg: messages.INVAILD_USER_REQUEST,
+      msg: err.message,
     };
   }
-  const OTP = generateOTP(4);
-  const SendEmail = await emailTemplete(payload.email, OTP);
-  if (!SendEmail) {
-    return {
-      ok: false,
-      status: StatusCodes.REQUEST_TIMEOUT,
-      msg: messages.FAILED_EMAIL,
-    };
-  }
-  const ResetCode = await hash(OTP.toString());
-  await prisma.user.update({
-    where: {
-      email: payload.email,
-    },
-    data: {
-      reset_password: ResetCode,
-    },
-  });
-} catch (err: any) {
-  const error = new Error(err.message);
-  logger.error(error);
-  return {
-    msg: err.message,
-  };
-}
-return {msg : 'Check your email for email verification'}
+  return { msg: "Check your email for email verification" };
 };
 
-//Confirm Code for verification 
-export const confirmCodeForPassswordConfirmation = async (payload: verifyUserDTO) => {
+//Confirm Code for verification
+export const confirmCodeForPassswordConfirmation = async (
+  payload: any
+) => {
   try {
-   const {error, value} = forgotcodeValidator(payload)
-   if(error){
-    return {
-      ok: false,
-      status: StatusCodes.BAD_REQUEST,
-      msg: error.message,
-    };
-   }
-   const findUser = await findUnique(value.email)
-   const confirmCode = await CompareHashed(value.code, findUser.reset_password)
-   if(!confirmCode) {
-    return {
-      ok: false,
-      status: StatusCodes.UNAUTHORIZED,
-      msg: messages.INCORRECT_OTP,
-    };
-   }
- return {msg : 'Verification is successfull'}
- } catch (err) {
-  const errors = new Error(err.message);
-  logger.error(errors);
-  return {
-    msg: err.message,
-  };
- }
- 
-}
-
-export const changePassword = async (payload) => {
-  try {
-  const {error, value} = PasswordValidatorSchema(payload)
-  const findUser = await findUnique(payload.email)
-
-    if(error){
+    const { error, value } = forgotcodeValidator(payload);
+    if (error) {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
         msg: error.message,
       };
+    }
+    const findUser = await findUnique(value.email);
+    const confirmCode = await CompareHashed(
+      value.code,
+      findUser.reset_password
+    );
+    if (!confirmCode) {
+      return {
+        ok: false,
+        status: StatusCodes.UNAUTHORIZED,
+        msg: messages.INCORRECT_OTP,
+      };
+    } else {
+      const NewPassword = await hash(payload.NewPassword);
+      await prisma.user.update({
+        where: { email: findUser.email },
+        data: {
+          password: NewPassword,
+          passwordConfirmation: "",
+          reset_password: "",
+        },
+      });
+    }
+    return { msg: "Verification is successfull" };
+  } catch (err) {
+    const errors = new Error(err.message);
+    logger.error(errors);
+    return {
+      msg: err.message,
+    };
   }
-  const NewPassword = await hash(payload.NewPassword)
-    const changePassword = await prisma.user.update({where: {email : findUser.email}, data : {
-         password: NewPassword,
-         passwordConfirmation: ''
-   }})
-   
-  return { msg : 'Password Have been successfully changed'}
+};
 
-  
-} catch (err) {
-  const errors = new Error(err.message);
-  return {
-    msg: err.message,
-  };
-}
-}
+export const changePassword = async (payload) => {
+  try {
+    const { error, value } = PasswordValidatorSchema(payload);
+    const findUser = await findUnique(payload.email);
+
+    if (error) {
+      return {
+        ok: false,
+        status: StatusCodes.BAD_REQUEST,
+        msg: error.message,
+      };
+    }
+    if (!findUser || findUser.reset_password != "") {
+      return {
+        ok: false,
+        status: StatusCodes.BAD_REQUEST,
+        msg: messages.INVAILD_USER_REQUEST,
+      };
+    }
+    const NewPassword = await hash(payload.NewPassword);
+    await prisma.user.update({
+      where: { email: findUser.email },
+      data: {
+        password: NewPassword,
+        passwordConfirmation: "",
+      },
+    });
+
+    return { msg: "Password Have been successfully changed" };
+  } catch (err) {
+    const errors = new Error(err.message);
+    return {
+      msg: err.message,
+    };
+  }
+};
 
 const CLIENT_ID = process.env.CLIENTID; // Replace with your CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENTSECRET; // Replace with your CLIENT_SECRET
-const REDIRECT_URI = 'http://localhost:5000/google-signup-callback'; // Replace with your redirect URI
-const SCOPES = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'];
+const REDIRECT_URI = "http://localhost:5000/google-signup-callback"; // Replace with your redirect URI
+const SCOPES = [
+  "https://www.googleapis.com/auth/userinfo.email",
+  "https://www.googleapis.com/auth/userinfo.profile",
+];
 
 const client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 
 export const googleAuth = async (payload: any) => {
-const getAuthUrl = () => {
-  const authUrl = client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
-  return authUrl;
-};
-
-const getUserInfo = async (code) => {
-  const { tokens } = await client.getToken(code);
-  client.setCredentials(tokens);
-
-  const people = google.people({ version: 'v1', auth: client });
-  const userInfo = await people.people.get({
-    resourceName: 'people/me',
-    personFields: 'emailAddresses,names',
-  });
-  return userInfo.data;
-};
-
-const createGoogleUser = async () => {
-  const authUrl = getAuthUrl();
-  console.log(`Please authorize this app by visiting this URL: ${authUrl}`);
-  await open(authUrl);
-
-  const code = await new Promise((resolve, reject) => {
-    const server = require('http').createServer(async (req, res) => {
-      try {
-        if (req.url.indexOf('/google-signup-callback') > -1) {
-          const code = req.url.split('=')[1];
-          res.end('Thank you! You can now close this window.');
-
-          server.close();
-
-          resolve(code);
-        }
-      } catch (error) {
-        reject(error);
-      }
-    }).listen(3000, () => {
-      console.log('Server running on port 3000');
+  const getAuthUrl = () => {
+    const authUrl = client.generateAuthUrl({
+      access_type: "offline",
+      scope: SCOPES,
     });
-  });
+    return authUrl;
+  };
 
-  const userInfo = await getUserInfo(code);
-  console.log(`User info: ${JSON.stringify(userInfo)}`);
-  // Create a new user with the user info
+  const getUserInfo = async (code) => {
+    const { tokens } = await client.getToken(code);
+    client.setCredentials(tokens);
+
+    const people = google.people({ version: "v1", auth: client });
+    const userInfo = await people.people.get({
+      resourceName: "people/me",
+      personFields: "emailAddresses,names",
+    });
+    return userInfo.data;
+  };
+
+  const createGoogleUser = async () => {
+    const authUrl = getAuthUrl();
+    console.log(`Please authorize this app by visiting this URL: ${authUrl}`);
+    await open(authUrl);
+
+    const code = await new Promise((resolve, reject) => {
+      const server = require("http")
+        .createServer(async (req, res) => {
+          try {
+            if (req.url.indexOf("/google-signup-callback") > -1) {
+              const code = req.url.split("=")[1];
+              res.end("Thank you! You can now close this window.");
+
+              server.close();
+
+              resolve(code);
+            }
+          } catch (error) {
+            reject(error);
+          }
+        })
+        .listen(3000, () => {
+          console.log("Server running on port 3000");
+        });
+    });
+
+    const userInfo = await getUserInfo(code);
+    console.log(`User info: ${JSON.stringify(userInfo)}`);
+    // Create a new user with the user info
+  };
+
+  createGoogleUser();
 };
-
-createGoogleUser();
-}
-
-
-

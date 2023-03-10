@@ -47,7 +47,6 @@ export const refreshTokenAuthentication = async (req, res, next) => {
       }
     }
   const access = await accessToken(payload)
-  console.log(access)
   res.cookie(access, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000

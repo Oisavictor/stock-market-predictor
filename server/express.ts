@@ -64,8 +64,9 @@ export const ExpressConnection = async () => {
   app.use(methodOverride("X-Method-Override")); //      IBM
   app.use(csrfProtection);
   app.use(function (req, res, next) {
-    // const myToken = req.csrfToken()
+    const myToken = req.csrfToken() 
     res.locals.csrftoken = req.headers["csrf-token"]; 
+    // console.log(myToken)
     next();
   });
   // app.use('/', router);
