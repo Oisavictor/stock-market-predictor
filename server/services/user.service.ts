@@ -190,8 +190,8 @@ export const LoginUser = async (payload: loginDTO) => {
     const refresh_Token = refreshToken(findUser);
     return {
       ok: true,
-      result: access_Token,
-      refresh_Token,
+      access_Token: access_Token,
+      refresh_Token: refresh_Token,
       status: StatusCodes.OK,
     };
   } catch (err) {
