@@ -7,11 +7,8 @@ import { logger } from "../middleware/logger";
 import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
 import { emailTemplete } from "../templete/emailTemplete";
-import {
-  UserValidator,
-  PasswordValidatorSchema,
-  forgotcodeValidator,
-} from "../schema/joiSchema";
+import { expirerTime } from "../helper/expireOtp";
+import { UserValidator, forgotcodeValidator } from "../schema/joiSchema";
 import {
   registerDTO,
   loginDTO,
@@ -56,11 +53,12 @@ export const createUser = async (payload: registerDTO) => {
       data: { confirmationCode, ...value },
     });
 
-    return createUser;
-  } catch (err: any) {
-    const error = new Error(err.message);
-    logger.error(error);
+    return { result: createUser, status: StatusCodes.CREATED };
+  } catch (err) {
+    const errors = new Error(err.message);
+    logger.error(errors);
     return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
       msg: err.message,
     };
   }
@@ -76,6 +74,8 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
         msg: messages.INCORRECT_OTP,
       };
     }
+    // Check if expirer
+    await expirerTime(payload.email);
     // decode the confirmation code
     const decode = await CompareHashed(
       payload.confirmationCode,
@@ -90,7 +90,7 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
       };
     }
     //update the confirmation code to be empty and isVerified to be true
-    const Result = await prisma.user.update({
+    const userConfirmed = await prisma.user.update({
       where: {
         email: payload.email,
       },
@@ -99,11 +99,16 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
         isVerified: true,
       },
     });
-    return { Result };
-  } catch (err: any) {
-    const error = new Error(err.message);
-    logger.error(error);
     return {
+      ok: true,
+      result: userConfirmed.isVerified || "",
+      status: StatusCodes.OK,
+    };
+  } catch (err) {
+    const errors = new Error(err.message);
+    logger.error(errors);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
       msg: err.message,
     };
   }
@@ -137,11 +142,16 @@ export const resendOTP = async (payload: any) => {
         confirmationCode: code,
       },
     });
-    return { msg: "Check your email for verification code" };
-  } catch (err: any) {
-    const error = new Error(err.message);
-    logger.error(error);
     return {
+      ok: true,
+      status: StatusCodes.OK,
+      msg: "Check your email for verification code",
+    };
+  } catch (err) {
+    const errors = new Error(err.message);
+    logger.error(errors);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
       msg: err.message,
     };
   }
@@ -178,11 +188,17 @@ export const LoginUser = async (payload: loginDTO) => {
     }
     const access_Token = accessToken(findUser);
     const refresh_Token = refreshToken(findUser);
-    return { access_Token, refresh_Token };
-  } catch (err: any) {
-    const error = new Error(err.message);
-    logger.error(error);
     return {
+      ok: true,
+      result: access_Token,
+      refresh_Token,
+      status: StatusCodes.OK,
+    };
+  } catch (err) {
+    const errors = new Error(err.message);
+    logger.error(errors);
+    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
       msg: err.message,
     };
   }
@@ -224,13 +240,15 @@ export const forgottenPassword = async (payload: passwordForgottenDTO) => {
       msg: err.message,
     };
   }
-  return { msg: "Check your email for email verification" };
+  return {
+    ok: true,
+    msg: "Check your email for verification code",
+    status: StatusCodes.OK,
+  };
 };
 
 //Confirm Code for verification
-export const confirmCodeForPassswordConfirmation = async (
-  payload: any
-) => {
+export const confirmCodeForPassswordConfirmation = async (payload: any) => {
   try {
     const { error, value } = forgotcodeValidator(payload);
     if (error) {
@@ -262,48 +280,12 @@ export const confirmCodeForPassswordConfirmation = async (
         },
       });
     }
-    return { msg: "Verification is successfull" };
+    return { ok: true, msg: "Password is changed", status: StatusCodes.OK };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
     return {
-      msg: err.message,
-    };
-  }
-};
-
-export const changePassword = async (payload) => {
-  try {
-    const { error, value } = PasswordValidatorSchema(payload);
-    const findUser = await findUnique(payload.email);
-
-    if (error) {
-      return {
-        ok: false,
-        status: StatusCodes.BAD_REQUEST,
-        msg: error.message,
-      };
-    }
-    if (!findUser || findUser.reset_password != "") {
-      return {
-        ok: false,
-        status: StatusCodes.BAD_REQUEST,
-        msg: messages.INVAILD_USER_REQUEST,
-      };
-    }
-    const NewPassword = await hash(payload.NewPassword);
-    await prisma.user.update({
-      where: { email: findUser.email },
-      data: {
-        password: NewPassword,
-        passwordConfirmation: "",
-      },
-    });
-
-    return { msg: "Password Have been successfully changed" };
-  } catch (err) {
-    const errors = new Error(err.message);
-    return {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
       msg: err.message,
     };
   }

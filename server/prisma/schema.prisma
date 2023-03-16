@@ -13,7 +13,7 @@ datasource db {
 }
 
 model User {
-  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                   Int    @id @default(autoincrement())
   uniqueId             String   @unique @default(uuid())
   createdAt            DateTime @default(now())
   email                String   @unique
@@ -26,13 +26,18 @@ model User {
   expirer_date         DateTime @default(now())
   reset_password       String   @default("")
   otp_expired          Boolean  @default(false)
+  status               Boolean  @default(false)
+  active               Boolean  @default(false)
+  blocked              Boolean  @default(false)
+
 }
 
 model Profile {
   id     Int    @id @default(autoincrement())
   bio    String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [uniqueId], onDelete: Cascade)
   userId String    @unique
+  @@index([userId])
 }
 enum Role {
   USER

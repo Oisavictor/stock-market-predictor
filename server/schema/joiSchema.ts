@@ -28,16 +28,7 @@ const verifyForgotOtp = Joi.object().keys({
       .trim()
       .max(30)
       .required(),
-});
-
-const Passwordvalidator = (schema) => (payload) =>
-   schema.validate(payload, { abortEarly: false })
-const passwordSchema = Joi.object().keys({
-   email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-      .trim()
-      .required(),
-   NewPassword: Joi.string()
+      NewPassword: Joi.string()
       .min(3)
       .trim()
       .max(30)
@@ -45,12 +36,11 @@ const passwordSchema = Joi.object().keys({
    passwordConfirmation: Joi.ref('NewPassword')
 });
 
+
 const UserValidator = validator(userSchema)
-const PasswordValidatorSchema = Passwordvalidator(passwordSchema)
 const forgotcodeValidator = verifyCode(verifyForgotOtp)
 
 export {
    UserValidator,
-   PasswordValidatorSchema,
    forgotcodeValidator
 }

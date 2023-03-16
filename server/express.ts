@@ -8,6 +8,7 @@ import * as expressIp from "express-ip";
 import * as methodOverride from "method-override";
 import * as flash from "connect-flash";
 import helmet from "helmet";
+import './utils/check'
 //Logger is called here
 import { logger } from "./middleware/logger";
 //All routes file is called here
@@ -65,7 +66,7 @@ export const ExpressConnection = async () => {
   app.use(csrfProtection);
   app.use(function (req, res, next) {
     const myToken = req.csrfToken() 
-    res.locals.csrftoken = req.headers["csrf-token"]; 
+    res.locals.csrftoken = req.headers["csrf-token"];
     // console.log(myToken)
     next();
   });

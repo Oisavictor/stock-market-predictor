@@ -5,6 +5,7 @@
   "license": "MIT",
   "description": "A Simple Stock Market Application for the Nigerian Market Users",
   "dependencies": {
+    "@levminer/speakeasy": "^1.4.2",
     "@prisma/client": "^4.9.0",
     "@types/axios": "^0.14.0",
     "@types/lusca": "^1.7.1",
@@ -35,6 +36,7 @@
     "method-override": "^3.0.0",
     "moment": "^2.29.4",
     "mongoose": "^6.9.0",
+    "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.1",
     "open": "^8.4.2",
@@ -45,6 +47,7 @@
     "pino-pretty": "^9.1.1",
     "request": "^2.88.2",
     "request-ip": "^3.3.0",
+    "speakeasy": "^2.0.0",
     "ts-node-dev": "^2.0.0",
     "zod": "^3.20.6"
   },
@@ -57,6 +60,8 @@
     "dev": "ts-node-dev --respawn --transpile-only server.ts",
     "migrate": "npx prisma migrate dev --name=init",
     "studio": "npx prisma studio",
+    "push": "npx prisma db push",
+    "migrate-deploy": "npx prisma migrate deploy",
     "test": "npx jest || npx prisma validate"
   },
   "devDependencies": {
