@@ -2,5 +2,11 @@
     "docify.commentService.programmingLanguage": "javascript",
     "docify.commentService.docstringFormat": "Custom",
     "docify.commentService.sidePanelReviewMode": true,
-    "docify.translateService.docstringFormat": "Custom"
+    "docify.translateService.docstringFormat": "Custom",
+
+    "cSpell.words": [
+        "forgotcode",
+        "Passwordvalidator",
+        "tlds"
+    ]
 }

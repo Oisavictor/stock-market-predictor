@@ -6,19 +6,10 @@ import { hash, CompareHashed } from "../helper/hash";
 import { logger } from "../middleware/logger";
 import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
-import { emailTemplete } from "../templete/emailTemplete";
-import { expirerTime } from "../helper/expireOtp";
-import { UserValidator, forgotcodeValidator } from "../schema/joiSchema";
-import {ApiResponse} from '../dto/api.response'
-import {
-  registerDTO,
-  loginDTO,
-  verifyUserDTO,
-  passwordForgottenDTO,
-} from "../dto//user.dto";
-import { OAuth2Client } from "google-auth-library";
-import { google } from "googleapis";
-// import { open } from 'open';
+import { emailTemplate as emailTemplate } from "../template/emailTemplate";
+import { UserValidator, PasswordValidatorSchema, forgotcodeValidator } from "../schema/joiSchema";
+import { registerDTO, loginDTO, verifyUserDTO, passwordForgottenDTO } from "../dto//user.dto";
+
 
 export const createUser = async (payload: registerDTO): Promise<ApiResponse> => {
   try {
@@ -39,7 +30,7 @@ export const createUser = async (payload: registerDTO): Promise<ApiResponse> => 
       };
     }
     const OTP = generateOTP(4);
-    const SendEmail = await emailTemplete(value.email, OTP);
+    const SendEmail = await emailTemplate(value.email, OTP);
     if (!SendEmail) {
       return {
         ok: false,
@@ -130,7 +121,7 @@ export const resendOTP = async (payload: any): Promise<ApiResponse>=> {
       };
     }
     const OTP = generateOTP(4);
-    const SendEmail = await emailTemplete(payload.email, OTP);
+    const SendEmail = await emailTemplate(payload.email, OTP);
     if (!SendEmail) {
       return {
         ok: false,
@@ -250,17 +241,75 @@ export const forgottenPassword = async (payload: passwordForgottenDTO): Promise<
     logger.error(error);
     return {
       ok: false,
-      status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: err.message,
+      status: StatusCodes.UNAUTHORIZED,
+      msg: messages.INVALID_USER_REQUEST,
     };
   }
+  const OTP = generateOTP(4);
+  const SendEmail = await emailTemplate(payload.email, OTP);
+  if (!SendEmail) {
+    return {
+      ok: false,
+      status: StatusCodes.REQUEST_TIMEOUT,
+      msg: messages.FAILED_EMAIL,
+    };
+  }
+  const ResetCode = await hash(OTP.toString());
+  await prisma.user.update({
+    where: {
+      email: payload.email,
+    },
+    data: {
+      reset_password: ResetCode,
+    },
+  });
+} catch (err: any) {
+  const error = new Error(err.message);
+  logger.error(error);
+  return {
+    msg: err.message,
+  };
+}
+return {msg : 'Check your email for email verification'}
 };
 
 //Confirm Code for verification
 export const changePassword = async (payload: any) => {
   try {
-    const { error, value } = forgotcodeValidator(payload);
-    if (error) {
+   const {error, value} = forgotcodeValidator(payload)
+   if(error){
+    return {
+      ok: false,
+      status: StatusCodes.BAD_REQUEST,
+      msg: error.message,
+    };
+   }
+   const findUser = await findUnique(value.email)
+   const confirmCode = await CompareHashed(value.code, findUser.reset_password)
+   if(!confirmCode) {
+    return {
+      ok: false,
+      status: StatusCodes.UNAUTHORIZED,
+      msg: messages.INCORRECT_OTP,
+    };
+   }
+ return {msg : 'Verification is successful'}
+ } catch (err) {
+  const errors = new Error(err.message);
+  logger.error(errors);
+  return {
+    msg: err.message,
+  };
+ }
+ 
+}
+
+export const changePassword = async (payload) => {
+  try {
+  const {error, value} = PasswordValidatorSchema(payload)
+  const findUser = await findUnique(payload.email)
+
+    if(error){
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
@@ -300,67 +349,3 @@ export const changePassword = async (payload: any) => {
   }
 };
 
-const CLIENT_ID = process.env.CLIENTID; // Replace with your CLIENT_ID
-const CLIENT_SECRET = process.env.CLIENTSECRET; // Replace with your CLIENT_SECRET
-const REDIRECT_URI = "http://localhost:5000/google-signup-callback"; // Replace with your redirect URI
-const SCOPES = [
-  "https://www.googleapis.com/auth/userinfo.email",
-  "https://www.googleapis.com/auth/userinfo.profile",
-];
-
-const client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
-
-export const googleAuth = async (payload: any) => {
-  const getAuthUrl = () => {
-    const authUrl = client.generateAuthUrl({
-      access_type: "offline",
-      scope: SCOPES,
-    });
-    return authUrl;
-  };
-
-  const getUserInfo = async (code) => {
-    const { tokens } = await client.getToken(code);
-    client.setCredentials(tokens);
-
-    const people = google.people({ version: "v1", auth: client });
-    const userInfo = await people.people.get({
-      resourceName: "people/me",
-      personFields: "emailAddresses,names",
-    });
-    return userInfo.data;
-  };
-
-  const createGoogleUser = async () => {
-    const authUrl = getAuthUrl();
-    console.log(`Please authorize this app by visiting this URL: ${authUrl}`);
-    await open(authUrl);
-
-    const code = await new Promise((resolve, reject) => {
-      const server = require("http")
-        .createServer(async (req, res) => {
-          try {
-            if (req.url.indexOf("/google-signup-callback") > -1) {
-              const code = req.url.split("=")[1];
-              res.end("Thank you! You can now close this window.");
-
-              server.close();
-
-              resolve(code);
-            }
-          } catch (error) {
-            reject(error);
-          }
-        })
-        .listen(3000, () => {
-          console.log("Server running on port 3000");
-        });
-    });
-
-    const userInfo = await getUserInfo(code);
-    console.log(`User info: ${JSON.stringify(userInfo)}`);
-    // Create a new user with the user info
-  };
-
-  createGoogleUser();
-};
