@@ -13,7 +13,7 @@ export const refreshToken = (data: any) => {
     return jwt.sign({ token: data }, publicKey, { expiresIn: '2h' })
 };
 
-export const verifyRefreshToken = (token: string) => {
+export const verifyRefreshToken = (token: string) => { 
     return jwt.verify(token, publicKey)
 };
 

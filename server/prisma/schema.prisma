@@ -11,7 +11,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
+// User 
 model User {
   id                   Int    @id @default(autoincrement())
   uniqueId             String   @unique @default(uuid())
@@ -31,7 +31,7 @@ model User {
   blocked              Boolean  @default(false)
 
 }
-
+// Profile
 model Profile {
   id     Int    @id @default(autoincrement())
   bio    String

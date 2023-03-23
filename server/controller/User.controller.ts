@@ -1,16 +1,16 @@
 import * as express from "express";
-import { logger } from "../middleware/logger";
+
 import {
   createUser,
   VerifyUser,
   LoginUser,
   resendOTP,
   forgottenPassword,
-  confirmCodeForPassswordConfirmation,
+  changePassword,
 } from "../services/user.service";
 import { StatusCodes } from "http-status-codes";
 
-export const createUserController = async (req, res, next): Promise<Object> => {
+export const createUserController = async (req, res, next) => {
   try {
     const user = await createUser(req.body);
     return res.status(user.status).json({ ...user });
@@ -47,7 +47,7 @@ export const loginUser = async (req, res, next) => {
       expiresIn: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
       httpOnly: true,
     };
-    res.cookie("cookie", user.refresh_Token, cookieOption);
+    res.cookie("cookie", user.body?.refresh_Token, cookieOption);
     return res.status(user.status).json({ ...user });
   } catch (error) {
     return res
@@ -65,7 +65,7 @@ export const forgottenPasswordController = async (req, res, next) => {
 
 export const confirmController = async (req, res, next) => {
   try {
-    const user = await confirmCodeForPassswordConfirmation(req.body);
+    const user = await changePassword(req.body);
     return res.status(StatusCodes.OK).json({ ...user });
   } catch (error) {}
 };

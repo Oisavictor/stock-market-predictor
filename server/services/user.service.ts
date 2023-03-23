@@ -9,6 +9,7 @@ import { StatusCodes } from "http-status-codes";
 import { emailTemplete } from "../templete/emailTemplete";
 import { expirerTime } from "../helper/expireOtp";
 import { UserValidator, forgotcodeValidator } from "../schema/joiSchema";
+import {ApiResponse} from '../dto/api.response'
 import {
   registerDTO,
   loginDTO,
@@ -19,14 +20,14 @@ import { OAuth2Client } from "google-auth-library";
 import { google } from "googleapis";
 // import { open } from 'open';
 
-export const createUser = async (payload: registerDTO) => {
+export const createUser = async (payload: registerDTO): Promise<ApiResponse> => {
   try {
     const { error, value } = UserValidator(payload);
     if (error) {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
-        msg: error.message,
+        message: error.message,
       };
     }
     const user = await findUnique(value.email);
@@ -34,7 +35,7 @@ export const createUser = async (payload: registerDTO) => {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
-        msg: messages.DUPLICATE_EMAIL,
+        message: messages.DUPLICATE_EMAIL,
       };
     }
     const OTP = generateOTP(4);
@@ -43,7 +44,7 @@ export const createUser = async (payload: registerDTO) => {
       return {
         ok: false,
         status: StatusCodes.REQUEST_TIMEOUT,
-        msg: messages.FAILED_EMAIL,
+        message: messages.FAILED_EMAIL,
       };
     }
     const confirmationCode = await hash(OTP.toString());
@@ -53,25 +54,26 @@ export const createUser = async (payload: registerDTO) => {
       data: { confirmationCode, ...value },
     });
 
-    return { result: createUser, status: StatusCodes.CREATED };
+    return { ok: true,  status: StatusCodes.CREATED, body: createUser, message: messages.CREATED };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
     return {
+      ok: false,
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      msg: err.message,
+      message: err.message,
     };
   }
 };
 
-export const VerifyUser = async (payload: verifyUserDTO) => {
+export const VerifyUser = async (payload: verifyUserDTO): Promise<ApiResponse> => {
   try {
     const findUser = await findUnique(payload.email);
     if (!findUser) {
       return {
         ok: false,
         status: StatusCodes.NOT_FOUND,
-        msg: messages.INCORRECT_OTP,
+        message: messages.INCORRECT_OTP,
       };
     }
     // Check if expirer
@@ -86,7 +88,7 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
       return {
         ok: false,
         status: StatusCodes.UNAUTHORIZED,
-        msg: messages.INCORRECT_OTP,
+        message: messages.INCORRECT_OTP,
       };
     }
     //update the confirmation code to be empty and isVerified to be true
@@ -101,20 +103,22 @@ export const VerifyUser = async (payload: verifyUserDTO) => {
     });
     return {
       ok: true,
-      result: userConfirmed.isVerified || "",
       status: StatusCodes.OK,
+      message: messages.VERIFIED_USER,
+      body: userConfirmed.isVerified,
     };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
     return {
+      ok: false,
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      msg: err.message,
+      message: err.message,
     };
   }
 };
 
-export const resendOTP = async (payload: any) => {
+export const resendOTP = async (payload: any): Promise<ApiResponse>=> {
   try {
     const { email } = payload;
     const findUser = await findUnique(email);
@@ -122,7 +126,7 @@ export const resendOTP = async (payload: any) => {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
-        msg: messages.VERIFIED,
+        message: messages.VERIFIED,
       };
     }
     const OTP = generateOTP(4);
@@ -131,7 +135,7 @@ export const resendOTP = async (payload: any) => {
       return {
         ok: false,
         status: StatusCodes.REQUEST_TIMEOUT,
-        msg: messages.FAILED_EMAIL,
+        message: messages.FAILED_EMAIL,
       };
     }
     findUser.confirmationCode = await hash(OTP.toString());
@@ -145,26 +149,27 @@ export const resendOTP = async (payload: any) => {
     return {
       ok: true,
       status: StatusCodes.OK,
-      msg: "Check your email for verification code",
+      message: messages.RESEND_CODE,
     };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
     return {
+      ok: false,
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      msg: err.message,
+      message: err.message,
     };
   }
 };
 
-export const LoginUser = async (payload: loginDTO) => {
+export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
   try {
     const findUser = await findUnique(payload.email);
     if (!findUser) {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
-        msg: messages.INCORRECT_DETAIL,
+        message: messages.INCORRECT_DETAIL,
       };
     }
 
@@ -176,43 +181,45 @@ export const LoginUser = async (payload: loginDTO) => {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
-        msg: messages.INCORRECT_DETAIL,
+        message: messages.INCORRECT_DETAIL,
       };
     }
     if (findUser.isVerified != true) {
       return {
         ok: false,
         status: StatusCodes.UNAUTHORIZED,
-        msg: messages.EMAIL_NOT_VERIFIED,
+        message: messages.EMAIL_NOT_VERIFIED,
       };
     }
     const access_Token = accessToken(findUser);
     const refresh_Token = refreshToken(findUser);
     return {
       ok: true,
-      access_Token: access_Token,
-      refresh_Token: refresh_Token,
       status: StatusCodes.OK,
+      message: messages.USER_LOGGEDIN,
+      body : { access_Token, refresh_Token,}
+
     };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
     return {
+      ok: false,
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      msg: err.message,
+      message: err.message,
     };
   }
 };
 
 // forgotten password
-export const forgottenPassword = async (payload: passwordForgottenDTO) => {
+export const forgottenPassword = async (payload: passwordForgottenDTO): Promise<ApiResponse> => {
   try {
     const findUser = await findUnique(payload.email);
     if (!findUser || findUser.isVerified === false) {
       return {
         ok: false,
         status: StatusCodes.UNAUTHORIZED,
-        msg: messages.INVAILD_USER_REQUEST,
+        message: messages.INVAILD_USER_REQUEST,
       };
     }
     const OTP = generateOTP(4);
@@ -221,7 +228,7 @@ export const forgottenPassword = async (payload: passwordForgottenDTO) => {
       return {
         ok: false,
         status: StatusCodes.REQUEST_TIMEOUT,
-        msg: messages.FAILED_EMAIL,
+        message: messages.FAILED_EMAIL,
       };
     }
     const ResetCode = await hash(OTP.toString());
@@ -233,29 +240,31 @@ export const forgottenPassword = async (payload: passwordForgottenDTO) => {
         reset_password: ResetCode,
       },
     });
+    return {
+      ok: true,
+      status: StatusCodes.OK,
+      message: messages.RESET_PASSWORD_OTP
+    }
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
     return {
-      msg: err.message,
+      ok: false,
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message: err.message,
     };
   }
-  return {
-    ok: true,
-    msg: "Check your email for verification code",
-    status: StatusCodes.OK,
-  };
 };
 
 //Confirm Code for verification
-export const confirmCodeForPassswordConfirmation = async (payload: any) => {
+export const changePassword = async (payload: any) => {
   try {
     const { error, value } = forgotcodeValidator(payload);
     if (error) {
       return {
         ok: false,
         status: StatusCodes.BAD_REQUEST,
-        msg: error.message,
+        message: error.message,
       };
     }
     const findUser = await findUnique(value.email);
@@ -267,7 +276,7 @@ export const confirmCodeForPassswordConfirmation = async (payload: any) => {
       return {
         ok: false,
         status: StatusCodes.UNAUTHORIZED,
-        msg: messages.INCORRECT_OTP,
+        message: messages.INCORRECT_OTP,
       };
     } else {
       const NewPassword = await hash(payload.NewPassword);
@@ -280,13 +289,13 @@ export const confirmCodeForPassswordConfirmation = async (payload: any) => {
         },
       });
     }
-    return { ok: true, msg: "Password is changed", status: StatusCodes.OK };
+    return { ok: true, message: "Password is changed successfully", status: StatusCodes.OK };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
     return {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      msg: err.message,
+      message: err.message,
     };
   }
 };
