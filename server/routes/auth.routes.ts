@@ -8,8 +8,8 @@ import {
   resendOTp,
   loginUser,
   forgottenPasswordController,
-  confirmController
-} from "../controller/User.controller";
+  changePasswordController
+} from "../controller/auth.controller";
 import { getStockPrice } from "../controller/StockPriceController";
 import {
   createUserSchema,
@@ -38,7 +38,7 @@ export const UserRoutes = (router: any) => {
   router.post(`${api}/resend`, resendOTp, apiLimiter);
   router.post(`${api}/login`, validateResource(LoginSchema), loginUser, apiLimiter);
   router.post(`${api}/forget-password`, validateResource(forgotPasswordSchema), forgottenPasswordController)
-  router.put(`${api}/forgot/verify`, confirmController)
+  router.put(`${api}/forgot/verify`, changePasswordController)
   router.get(`${api}/portal`, AuthUser, (req, res, next) => {
     return res.status(200).json(req.user);
   });

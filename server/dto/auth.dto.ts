@@ -11,11 +11,17 @@ export class loginDTO {
 }
 
 export class verifyUserDTO {
-    confirmationCode: number;
+    code: number;
     email: string;
 }
 export class passwordForgottenDTO {
     email: string;
     NewPassword: string;
     passwordConfirmation: string
+}
+
+export interface IchangePassword {
+    code: number;
+    email : string;
+    password: string;
 }

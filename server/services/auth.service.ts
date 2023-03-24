@@ -6,22 +6,23 @@ import { hash, CompareHashed } from "../helper/hash";
 import { logger } from "../middleware/logger";
 import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
-import { emailTemplate as emailTemplate } from "../template/emailTemplate";
-import { UserValidator, PasswordValidatorSchema, forgotcodeValidator } from "../schema/joiSchema";
-import { registerDTO, loginDTO, verifyUserDTO, passwordForgottenDTO } from "../dto//user.dto";
+import { emailTemplate } from "../template/emailTemplate";
+import {
+  registerDTO,
+  loginDTO,
+  verifyUserDTO,
+  passwordForgottenDTO,
+  IchangePassword,
 
+} from "../dto/auth.dto";
+import { ApiResponse } from "../dto/api.response";
 
-export const createUser = async (payload: registerDTO): Promise<ApiResponse> => {
+export const createUser = async (
+  payload: registerDTO
+): Promise<ApiResponse> => {
   try {
-    const { error, value } = UserValidator(payload);
-    if (error) {
-      return {
-        ok: false,
-        status: StatusCodes.BAD_REQUEST,
-        message: error.message,
-      };
-    }
-    const user = await findUnique(value.email);
+    const { name, email, password } = payload;
+    const user = await findUnique(email);
     if (user) {
       return {
         ok: false,
@@ -30,22 +31,19 @@ export const createUser = async (payload: registerDTO): Promise<ApiResponse> => 
       };
     }
     const OTP = generateOTP(4);
-    const SendEmail = await emailTemplate(value.email, OTP);
-    if (!SendEmail) {
-      return {
-        ok: false,
-        status: StatusCodes.REQUEST_TIMEOUT,
-        message: messages.FAILED_EMAIL,
-      };
-    }
+    await emailTemplate(email, OTP);
     const confirmationCode = await hash(OTP.toString());
-    value.password = await hash(value.password);
-    value.passwordConfirmation = "";
+    payload.password = await hash(password);
     const createUser = await prisma.user.create({
-      data: { confirmationCode, ...value },
+      data: { confirmationCode, ...payload },
     });
 
-    return { ok: true,  status: StatusCodes.CREATED, body: createUser, message: messages.CREATED };
+    return {
+      ok: true,
+      status: StatusCodes.CREATED,
+      body: createUser,
+      message: messages.CREATED,
+    };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
@@ -57,9 +55,12 @@ export const createUser = async (payload: registerDTO): Promise<ApiResponse> => 
   }
 };
 
-export const VerifyUser = async (payload: verifyUserDTO): Promise<ApiResponse> => {
+export const VerifyUser = async (
+  payload: verifyUserDTO
+): Promise<ApiResponse> => {
   try {
-    const findUser = await findUnique(payload.email);
+    const {email, code} = payload
+    const findUser = await findUnique(email);
     if (!findUser) {
       return {
         ok: false,
@@ -67,11 +68,10 @@ export const VerifyUser = async (payload: verifyUserDTO): Promise<ApiResponse> =
         message: messages.INCORRECT_OTP,
       };
     }
-    // Check if expirer
-    await expirerTime(payload.email);
+
     // decode the confirmation code
     const decode = await CompareHashed(
-      payload.confirmationCode,
+      code,
       findUser.confirmationCode
     );
 
@@ -109,7 +109,7 @@ export const VerifyUser = async (payload: verifyUserDTO): Promise<ApiResponse> =
   }
 };
 
-export const resendOTP = async (payload: any): Promise<ApiResponse>=> {
+export const resendOTP = async (payload: any): Promise<ApiResponse> => {
   try {
     const { email } = payload;
     const findUser = await findUnique(email);
@@ -148,14 +148,15 @@ export const resendOTP = async (payload: any): Promise<ApiResponse>=> {
     return {
       ok: false,
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: err.message,
+      message: messages.INTERNAL_SERVER_ERROR,
     };
   }
 };
 
 export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
   try {
-    const findUser = await findUnique(payload.email);
+    const {email, password} = payload
+    const findUser = await findUnique(email);
     if (!findUser) {
       return {
         ok: false,
@@ -165,7 +166,7 @@ export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
     }
 
     const verifyPassword = await CompareHashed(
-      payload.password,
+      password,
       findUser.password
     );
     if (!verifyPassword) {
@@ -188,8 +189,7 @@ export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
       ok: true,
       status: StatusCodes.OK,
       message: messages.USER_LOGGEDIN,
-      body : { access_Token, refresh_Token,}
-
+      body: { access_Token, refresh_Token },
     };
   } catch (err) {
     const errors = new Error(err.message);
@@ -197,13 +197,15 @@ export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
     return {
       ok: false,
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: err.message,
+      message: messages.INTERNAL_SERVER_ERROR,
     };
   }
 };
 
 // forgotten password
-export const forgottenPassword = async (payload: passwordForgottenDTO): Promise<ApiResponse> => {
+export const forgottenPassword = async (
+  payload: passwordForgottenDTO
+): Promise<ApiResponse> => {
   try {
     const findUser = await findUnique(payload.email);
     if (!findUser || findUser.isVerified === false) {
@@ -214,14 +216,7 @@ export const forgottenPassword = async (payload: passwordForgottenDTO): Promise<
       };
     }
     const OTP = generateOTP(4);
-    const SendEmail = await emailTemplete(payload.email, OTP);
-    if (!SendEmail) {
-      return {
-        ok: false,
-        status: StatusCodes.REQUEST_TIMEOUT,
-        message: messages.FAILED_EMAIL,
-      };
-    }
+     await emailTemplate(payload.email, OTP);
     const ResetCode = await hash(OTP.toString());
     await prisma.user.update({
       where: {
@@ -234,118 +229,51 @@ export const forgottenPassword = async (payload: passwordForgottenDTO): Promise<
     return {
       ok: true,
       status: StatusCodes.OK,
-      message: messages.RESET_PASSWORD_OTP
-    }
+      message: messages.RESET_PASSWORD_OTP,
+    };
   } catch (err: any) {
     const error = new Error(err.message);
     logger.error(error);
     return {
       ok: false,
-      status: StatusCodes.UNAUTHORIZED,
-      msg: messages.INVALID_USER_REQUEST,
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      message:messages.INTERNAL_SERVER_ERROR,
     };
   }
-  const OTP = generateOTP(4);
-  const SendEmail = await emailTemplate(payload.email, OTP);
-  if (!SendEmail) {
-    return {
-      ok: false,
-      status: StatusCodes.REQUEST_TIMEOUT,
-      msg: messages.FAILED_EMAIL,
-    };
-  }
-  const ResetCode = await hash(OTP.toString());
-  await prisma.user.update({
-    where: {
-      email: payload.email,
-    },
-    data: {
-      reset_password: ResetCode,
-    },
-  });
-} catch (err: any) {
-  const error = new Error(err.message);
-  logger.error(error);
-  return {
-    msg: err.message,
-  };
-}
-return {msg : 'Check your email for email verification'}
 };
 
 //Confirm Code for verification
-export const changePassword = async (payload: any) => {
+export const changePasswordService = async (
+  payload: IchangePassword
+): Promise<ApiResponse> => {
   try {
-   const {error, value} = forgotcodeValidator(payload)
-   if(error){
-    return {
-      ok: false,
-      status: StatusCodes.BAD_REQUEST,
-      msg: error.message,
-    };
-   }
-   const findUser = await findUnique(value.email)
-   const confirmCode = await CompareHashed(value.code, findUser.reset_password)
-   if(!confirmCode) {
-    return {
-      ok: false,
-      status: StatusCodes.UNAUTHORIZED,
-      msg: messages.INCORRECT_OTP,
-    };
-   }
- return {msg : 'Verification is successful'}
- } catch (err) {
-  const errors = new Error(err.message);
-  logger.error(errors);
-  return {
-    msg: err.message,
-  };
- }
- 
-}
-
-export const changePassword = async (payload) => {
-  try {
-  const {error, value} = PasswordValidatorSchema(payload)
-  const findUser = await findUnique(payload.email)
-
-    if(error){
-      return {
-        ok: false,
-        status: StatusCodes.BAD_REQUEST,
-        message: error.message,
-      };
-    }
-    const findUser = await findUnique(value.email);
-    const confirmCode = await CompareHashed(
-      value.code,
-      findUser.reset_password
-    );
+    const { email, password, code } = payload;
+    const findUser = await findUnique(email);
+    const confirmCode = await CompareHashed(code, findUser.reset_password);
     if (!confirmCode) {
       return {
         ok: false,
         status: StatusCodes.UNAUTHORIZED,
         message: messages.INCORRECT_OTP,
       };
-    } else {
-      const NewPassword = await hash(payload.NewPassword);
-      await prisma.user.update({
-        where: { email: findUser.email },
-        data: {
-          password: NewPassword,
-          passwordConfirmation: "",
-          reset_password: "",
-        },
-      });
     }
-    return { ok: true, message: "Password is changed successfully", status: StatusCodes.OK };
+    const Password = await hash(password);
+    await prisma.user.update({
+      where: {
+        email: email,
+      },
+      data: {
+        password: Password,
+      },
+    });
+    return { ok: true, status: StatusCodes.OK, message: "Password is changed" };
   } catch (err) {
     const errors = new Error(err.message);
     logger.error(errors);
     return {
+      ok: false,
       status: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: err.message,
+      message: messages.INTERNAL_SERVER_ERROR,
     };
   }
 };
-

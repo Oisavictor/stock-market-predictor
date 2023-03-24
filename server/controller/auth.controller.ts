@@ -1,18 +1,27 @@
 import * as express from "express";
-
+import {
+  VRegister,
+  VOtpVerification,
+  VLogin,
+  VChangePassword,
+  VForgetPassword
+} from "../schema/joiSchema";
 import {
   createUser,
   VerifyUser,
   LoginUser,
   resendOTP,
   forgottenPassword,
-  changePassword,
-} from "../services/user.service";
+  changePasswordService,
+} from "../services/auth.service";
 import { StatusCodes } from "http-status-codes";
 
 export const createUserController = async (req, res, next) => {
+   const{ body} = req
+   let payload
   try {
-    const user = await createUser(req.body);
+    payload = await VRegister(body)
+    const user = await createUser(payload);
     return res.status(user.status).json({ ...user });
   } catch (error) {
     return res
@@ -20,9 +29,14 @@ export const createUserController = async (req, res, next) => {
       .json({ ok: false, status: error.status, msg: error.message });
   }
 };
+
+//Verify User account 
 export const verifyUserByOTP = async (req, res, next) => {
+  const  { body } = req
+  let payload
   try {
-    const user = await VerifyUser(req.body);
+    payload = await VOtpVerification(body)
+    const user = await VerifyUser(payload);
     return res.status(user.status).json({ ...user });
   } catch (error) {
     return res
@@ -41,8 +55,11 @@ export const resendOTp = async (req, res, next) => {
   }
 };
 export const loginUser = async (req, res, next) => {
+  const {body} = req
+  let payload
   try {
-    const user = await LoginUser(req.body);
+    payload = await VLogin(body)
+    const user = await LoginUser(payload);
     const cookieOption = {
       expiresIn: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
       httpOnly: true,
@@ -57,15 +74,21 @@ export const loginUser = async (req, res, next) => {
 };
 
 export const forgottenPasswordController = async (req, res, next) => {
+   const { body } = req
+   let payload
   try {
-    const user = await forgottenPassword(req.body);
+    payload = await VForgetPassword(body)
+    const user = await forgottenPassword(payload);
     return res.status(StatusCodes.OK).json({ ...user });
   } catch (error) {}
 };
 
-export const confirmController = async (req, res, next) => {
+export const changePasswordController = async (req, res, next) => {
+  const {body} = req
+  let payload
   try {
-    const user = await changePassword(req.body);
+    payload= await VChangePassword (body)
+    const user = await changePasswordService(payload);
     return res.status(StatusCodes.OK).json({ ...user });
   } catch (error) {}
 };

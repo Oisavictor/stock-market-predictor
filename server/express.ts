@@ -8,12 +8,12 @@ import * as expressIp from "express-ip";
 import * as methodOverride from "method-override";
 import * as flash from "connect-flash";
 import helmet from "helmet";
-import './utils/check'
+
 //Logger is called here
 import { logger } from "./middleware/logger";
 //All routes file is called here
 import { Routes } from "./routes/route";
-import { UserRoutes } from "./routes/user.routes";
+import { UserRoutes } from "./routes/auth.routes";
 //import prisma to connect automatically
 import { connectPrisma } from "./connectPrisma";
 //Express connection
