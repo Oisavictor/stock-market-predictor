@@ -21,6 +21,7 @@ export const createUserController = async (req, res, next) => {
    let payload
   try {
     payload = await VRegister(body)
+
     const user = await createUser(payload);
     return res.status(user.status).json({ ...user });
   } catch (error) {
@@ -55,22 +56,24 @@ export const resendOTp = async (req, res, next) => {
   }
 };
 export const loginUser = async (req, res, next) => {
-  const {body} = req
-  let payload
+  const { body } = req;
+  let payload;
+
   try {
-    payload = await VLogin(body)
-    const user = await LoginUser(payload);
+    payload = await VLogin(body);
+    const loginUser = await LoginUser(payload);
     const cookieOption = {
       expiresIn: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
       httpOnly: true,
     };
-    res.cookie("cookie", user.body?.refresh_Token, cookieOption);
-    return res.status(user.status).json({ ...user });
+    res.cookie("cookie", loginUser.body?.refresh_Token, cookieOption);
+    return res.status(loginUser.status).json({ ...loginUser });
   } catch (error) {
-    return res
-      .status(error.status)
-      .json({ ok: false, status: error.status, msg: error.message });
+    console.error(error);
+    return res.status(error.status).json({ ...error });
   }
+ 
+
 };
 
 export const forgottenPasswordController = async (req, res, next) => {

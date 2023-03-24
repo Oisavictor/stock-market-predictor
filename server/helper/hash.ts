@@ -14,3 +14,9 @@ export const CompareHashed = async (userData: any, data: any) => {
 
 
 };
+// export const CompareHasheds = async (userData: any, data: any) => {
+//     const hi = await bcrypt.compare(userData, data)
+//  console.log(hi)
+
+// };
+// CompareHasheds('7752', '$2b$10$aRfy31qYcCSFfcafHqTQVO4knZVeFKhWcCiMxKqJCtD2h2BDGpebO') 

@@ -13,8 +13,8 @@ import {
   verifyUserDTO,
   passwordForgottenDTO,
   IchangePassword,
-
 } from "../dto/auth.dto";
+
 import { ApiResponse } from "../dto/api.response";
 
 export const createUser = async (
@@ -34,6 +34,7 @@ export const createUser = async (
     await emailTemplate(email, OTP);
     const confirmationCode = await hash(OTP.toString());
     payload.password = await hash(password);
+    payload.passwordConfirmation = '' 
     const createUser = await prisma.user.create({
       data: { confirmationCode, ...payload },
     });
@@ -61,17 +62,9 @@ export const VerifyUser = async (
   try {
     const {email, code} = payload
     const findUser = await findUnique(email);
-    if (!findUser) {
-      return {
-        ok: false,
-        status: StatusCodes.NOT_FOUND,
-        message: messages.INCORRECT_OTP,
-      };
-    }
-
     // decode the confirmation code
     const decode = await CompareHashed(
-      code,
+      payload.code,
       findUser.confirmationCode
     );
 
@@ -90,13 +83,14 @@ export const VerifyUser = async (
       data: {
         confirmationCode: "",
         isVerified: true,
+        status: true
       },
     });
     return {
       ok: true,
       status: StatusCodes.OK,
       message: messages.VERIFIED_USER,
-      body: userConfirmed.isVerified,
+      body: userConfirmed,
     };
   } catch (err) {
     const errors = new Error(err.message);
@@ -155,8 +149,7 @@ export const resendOTP = async (payload: any): Promise<ApiResponse> => {
 
 export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
   try {
-    const {email, password} = payload
-    const findUser = await findUnique(email);
+    const findUser = await prisma.user.findUnique({ where  : { email : payload.email}});
     if (!findUser) {
       return {
         ok: false,
@@ -166,7 +159,7 @@ export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
     }
 
     const verifyPassword = await CompareHashed(
-      password,
+      payload.password,
       findUser.password
     );
     if (!verifyPassword) {
@@ -177,7 +170,7 @@ export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
       };
     }
     if (findUser.isVerified != true) {
-      return {
+      throw {
         ok: false,
         status: StatusCodes.UNAUTHORIZED,
         message: messages.EMAIL_NOT_VERIFIED,

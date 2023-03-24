@@ -66,7 +66,7 @@ export const ExpressConnection = async () => {
   app.use(csrfProtection);
   app.use(function (req, res, next) {
     const myToken = req.csrfToken()
-    console.log(myToken);
+    // console.log(myToken);
     
     res.locals.csrftoken = req.headers["csrf-token"]; 
     next();

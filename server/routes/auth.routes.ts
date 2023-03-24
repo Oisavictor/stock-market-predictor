@@ -1,6 +1,5 @@
 import * as express from "express";
 import { AuthUser, refreshTokenAuthentication } from "../middleware/auth/auth";
-import { validateResource } from "../resources/validateResources";
 import { apiLimiter } from '../helper/rateLimit';
 import {
   createUserController,
@@ -11,34 +10,27 @@ import {
   changePasswordController
 } from "../controller/auth.controller";
 import { getStockPrice } from "../controller/StockPriceController";
-import {
-  createUserSchema,
-  verifyUserOTPSchema,
-  LoginSchema,
-  forgotPasswordSchema
-} from "../schema/user.schema";
+
 
 const api = "/api/user";
 
 export const UserRoutes = (router: any) => {
   router.post(
     `${api}/create`,
-    validateResource(createUserSchema),
     createUserController,
     apiLimiter
   );
 
   router.post(
     `${api}/verify`,
-    validateResource(verifyUserOTPSchema),
     verifyUserByOTP,
     apiLimiter
   );
 
   router.post(`${api}/resend`, resendOTp, apiLimiter);
-  router.post(`${api}/login`, validateResource(LoginSchema), loginUser, apiLimiter);
-  router.post(`${api}/forget-password`, validateResource(forgotPasswordSchema), forgottenPasswordController)
-  router.put(`${api}/forgot/verify`, changePasswordController)
+  router.post(`${api}/login`,  loginUser, apiLimiter); 
+  router.post(`${api}/forget-password`,  forgottenPasswordController)
+  router.put(`${api}/forgot/change-password`, changePasswordController)
   router.get(`${api}/portal`, AuthUser, (req, res, next) => {
     return res.status(200).json(req.user);
   });

@@ -14,5 +14,5 @@ export default  {
     RESEND_CODE: 'Check your email for verification code',
     USER_LOGGEDIN: 'User is loggedin',
     RESET_PASSWORD_OTP: 'We sent an otp to your email',
-    INTERNAL_SERVER_ERROR: 'Interna server error'
+    INTERNAL_SERVER_ERROR: 'Internal server error'
 }

@@ -20,6 +20,7 @@ model User {
   name                 String   @default("")
   profile              Profile?
   password             String
+  passwordConfirmation String
   confirmationCode     String   @default("")
   isVerified           Boolean  @default(false)
   expirer_date         DateTime @default(now())
