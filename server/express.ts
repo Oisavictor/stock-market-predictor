@@ -36,7 +36,7 @@ export const ExpressConnection = async () => {
   const app = express();
   app.set('trust proxy', 1)
   // const csrfProtect = new csrf({ cookie: true })
-  app.use(express.json());
+  app.use(express.json({ limit : "50mb"}));
   app.use(cookieParser());
   app.use(
     session({
@@ -66,7 +66,7 @@ export const ExpressConnection = async () => {
   app.use(csrfProtection);
   app.use(function (req, res, next) {
     const myToken = req.csrfToken()
-    // console.log(myToken);
+    console.log(myToken);
     
     res.locals.csrftoken = req.headers["csrf-token"]; 
     next();
