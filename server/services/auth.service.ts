@@ -240,6 +240,7 @@ export const changePasswordService = async (
   payload: IchangePassword
 ): Promise<ApiResponse> => {
   try {
+    
     const { email, password, code } = payload;
     const findUser = await findUnique(email);
     const confirmCode = await CompareHashed(code, findUser.reset_password);
@@ -251,6 +252,7 @@ export const changePasswordService = async (
       };
     }
     const Password = await hash(password);
+    console.log(Password) 
     await prisma.user.update({
       where: {
         email: email,
@@ -262,6 +264,7 @@ export const changePasswordService = async (
     return { ok: true, status: StatusCodes.OK, message: "Password is changed" };
   } catch (err) {
     const errors = new Error(err.message);
+    console.log(err)
     logger.error(errors);
     return {
       ok: false,

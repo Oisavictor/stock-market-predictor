@@ -7,7 +7,7 @@ import {
   resendOTp,
   loginUser,
   forgottenPasswordController,
-  changePasswordController
+  resetPasswordController
 } from "../controller/auth.controller";
 import { getStockPrice } from "../controller/StockPriceController";
 
@@ -30,7 +30,7 @@ export const UserRoutes = (router: any) => {
   router.post(`${api}/resend`, resendOTp, apiLimiter);
   router.post(`${api}/login`,  loginUser, apiLimiter); 
   router.post(`${api}/forget-password`,  forgottenPasswordController)
-  router.put(`${api}/forgot/change-password`, changePasswordController)
+  router.put(`${api}/forgot/password`, resetPasswordController)
   router.get(`${api}/portal`, AuthUser, (req, res, next) => {
     return res.status(200).json(req.user);
   });

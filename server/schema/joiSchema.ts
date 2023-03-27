@@ -74,16 +74,16 @@ export const VForgetPassword = async (body: any) => {
 }
 export const VChangePassword = async (body: any) => {
 
-     const forgetPasswordSchema = Joi.object({
+     const changePasswordSchema = Joi.object({
       email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
       .trim()
       .required(),
     code: Joi.string().min(4).trim().max(30).required(),
-    NewPassword: Joi.string().min(3).trim().max(30).required(),
-    passwordConfirmation: Joi.ref("NewPassword"),
+    password: Joi.string().min(3).trim().max(30).required(),
+    passwordConfirmation: Joi.ref("password"),
     });
-    const { error, value } = forgetPasswordSchema.validate(body, { abortEarly: false });
+    const { error, value } = changePasswordSchema.validate(body, { abortEarly: false });
     if (error) {
       throw {
         ok: false,
@@ -93,4 +93,4 @@ export const VChangePassword = async (body: any) => {
     }
   
     return value;
- };
+ }; 

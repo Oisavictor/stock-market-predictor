@@ -83,15 +83,23 @@ export const forgottenPasswordController = async (req, res, next) => {
     payload = await VForgetPassword(body)
     const user = await forgottenPassword(payload);
     return res.status(StatusCodes.OK).json({ ...user });
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    return res.status(error.status).json({ ...error });
+  }
 };
 
-export const changePasswordController = async (req, res, next) => {
+
+export  const resetPasswordController  = async (req, res, next) => {
   const {body} = req
   let payload
   try {
-    payload= await VChangePassword (body)
+    payload= await VChangePassword(body)
+    console.log(payload)
     const user = await changePasswordService(payload);
     return res.status(StatusCodes.OK).json({ ...user });
-  } catch (error) {}
-};
+  } catch (error) {
+    console.error(error);
+    return res.status(error.status).json({ ...error });
+  }
+}
