@@ -32,11 +32,11 @@ export const createUser = async (
     }
     const OTP = generateOTP(4);
     await emailTemplate(email, OTP);
-    const confirmationCode = await hash(OTP.toString());
+    const token = await hash(OTP.toString());
     payload.password = await hash(password);
     payload.passwordConfirmation = '' 
     const createUser = await prisma.user.create({
-      data: { confirmationCode, ...payload },
+      data: { token, ...payload },
     });
 
     return {
@@ -65,7 +65,7 @@ export const VerifyUser = async (
     // decode the confirmation code
     const decode = await CompareHashed(
       payload.code,
-      findUser.confirmationCode
+      findUser.token
     );
 
     if (!decode) {
@@ -81,7 +81,7 @@ export const VerifyUser = async (
         email: payload.email,
       },
       data: {
-        confirmationCode: "",
+        token: "",
         isVerified: true,
         status: true
       },
@@ -123,12 +123,12 @@ export const resendOTP = async (payload: any): Promise<ApiResponse> => {
         message: messages.FAILED_EMAIL,
       };
     }
-    findUser.confirmationCode = await hash(OTP.toString());
-    const code = findUser.confirmationCode;
+    findUser.token = await hash(OTP.toString());
+    const code = findUser.token;
     await prisma.user.update({
       where: { email: email },
       data: {
-        confirmationCode: code,
+        token: code,
       },
     });
     return {
@@ -149,7 +149,8 @@ export const resendOTP = async (payload: any): Promise<ApiResponse> => {
 
 export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
   try {
-    const findUser = await prisma.user.findUnique({ where  : { email : payload.email}});
+    const {email, password} = payload
+    const findUser = await prisma.user.findUnique({ where  : { email : email}}); 
     if (!findUser) {
       return {
         ok: false,
@@ -159,7 +160,7 @@ export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
     }
 
     const verifyPassword = await CompareHashed(
-      payload.password,
+      password,
       findUser.password
     );
     if (!verifyPassword) {
@@ -178,11 +179,17 @@ export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
     }
     const access_Token = accessToken(findUser);
     const refresh_Token = refreshToken(findUser);
+    await prisma.user.update({
+      where: { email: email },
+      data: {
+        active: true,
+      },
+    });
     return {
       ok: true,
       status: StatusCodes.OK,
       message: messages.USER_LOGGEDIN,
-      body: { access_Token, refresh_Token },
+      body: { access_Token, refresh_Token, findUser }
     };
   } catch (err) {
     const errors = new Error(err.message);
@@ -216,7 +223,7 @@ export const forgottenPassword = async (
         email: payload.email,
       },
       data: {
-        reset_password: ResetCode,
+        reset_code: ResetCode,
       },
     });
     return {
@@ -243,7 +250,7 @@ export const changePasswordService = async (
     
     const { email, password, code } = payload;
     const findUser = await findUnique(email);
-    const confirmCode = await CompareHashed(code, findUser.reset_password);
+    const confirmCode = await CompareHashed(code, findUser.reset_code);
     if (!confirmCode) {
       return {
         ok: false,
@@ -258,6 +265,7 @@ export const changePasswordService = async (
       },
       data: {
         password: Password,
+        reset_code: ''
       },
     });
     return { ok: true, status: StatusCodes.OK, message: "Password is changed" };

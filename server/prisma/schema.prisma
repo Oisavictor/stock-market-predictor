@@ -21,10 +21,10 @@ model User {
   profile              Profile?
   password             String
   passwordConfirmation String
-  confirmationCode     String   @default("")
+  token     String   @default("")
   isVerified           Boolean  @default(false)
   expirer_date         DateTime @default(now())
-  reset_password       String   @default("")
+  reset_code           String   @default("")
   otp_expired          Boolean  @default(false)
   status               Boolean  @default(false)
   active               Boolean  @default(false)
