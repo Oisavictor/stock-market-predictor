@@ -252,7 +252,6 @@ export const changePasswordService = async (
       };
     }
     const Password = await hash(password);
-    console.log(Password) 
     await prisma.user.update({
       where: {
         email: email,
