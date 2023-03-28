@@ -17,8 +17,8 @@ const api = "/api/user";
 
 export const UserRoutes = (router: any) => {
   router.post( `${api}/upload`, upload.single('avater'), async (req, res, next) => {
-    const avater = req.file
-    console.log(avater)
+    // const avater = req.file
+    console.log(req.file)
   })
   router.post(
     `${api}/create`,
