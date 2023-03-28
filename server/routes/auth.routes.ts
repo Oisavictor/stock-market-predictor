@@ -1,6 +1,7 @@
 import * as express from "express";
 import { AuthUser, refreshTokenAuthentication } from "../middleware/auth/auth";
 import { apiLimiter } from '../helper/rateLimit';
+import {upload} from '../middleware/multer';
 import {
   createUserController,
   verifyUserByOTP,
@@ -15,6 +16,10 @@ import { getStockPrice } from "../controller/StockPriceController";
 const api = "/api/user";
 
 export const UserRoutes = (router: any) => {
+  router.post( `${api}/upload`, upload.single('avater'), async (req, res, next) => {
+    const avater = req.file
+    console.log(avater)
+  })
   router.post(
     `${api}/create`,
     createUserController,
