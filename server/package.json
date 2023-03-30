@@ -52,7 +52,10 @@
     "zod": "^3.20.6"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "migrate": "ts-node npx prisma migrate dev --name=init",
+    "studio": "ts-node npx prisma studio",
+    "push": "ts-node npx prisma db push"
   },
   "scripts": {
     "build": "npx tsc",

@@ -2,11 +2,17 @@ import { prisma } from "./Interface/user.interface";
 import { logger } from "./middleware/logger";
 export const connectPrisma = async (): Promise<void> => {
     try {
-       await prisma.$connect().then(() => {
-            logger.info('Database is connected Successfully')
+       await prisma.$on('info', (e) => {
+            logger.info(` ${e.message}`)
+        })
+       await prisma.$connect().then((e) => {
+        logger.info(`Database is connected Successfully `)
+           
         }).catch((err) => {
-            logger.error(`Reasons why Database fails to connect: ${err.message}`)
-            prisma.$disconnect()
+            if(err) {
+                prisma.$on('error', (e) => { logger.error(`Reason why database fails to connect ${e.message}`)})
+                prisma.$disconnect()
+            }  
         })
     } catch (error) {
         if(error) 

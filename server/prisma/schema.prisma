@@ -2,43 +2,48 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
-  extensions = [pgcrypto]
+  extensions      = [pgcrypto]
+  output          = "node_modules/.prisma/client"
+  engineType      = "library"
+  binaryTargets   = ["native"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 // User 
 model User {
-  id                   Int    @id @default(autoincrement())
-  uniqueId             String   @unique @default(uuid())
-  createdAt            DateTime @default(now())
-  email                String   @unique
-  name                 String   @default("")
-  profile              Profile?
+  id                   Int       @id @default(autoincrement())
+  uniqueId             String    @unique @default(uuid())
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @default(now())
+  email                String    @unique
+  name                 String    @default("")
+  profile              Profile[]
   password             String
   passwordConfirmation String
-  token     String   @default("")
-  isVerified           Boolean  @default(false)
-  expirer_date         DateTime @default(now())
-  reset_code           String   @default("")
-  otp_expired          Boolean  @default(false)
-  status               Boolean  @default(false)
-  active               Boolean  @default(false)
-  blocked              Boolean  @default(false)
-
+  token                String    @default("")
+  isVerified           Boolean   @default(false)
+  expirer_date         DateTime  @default(now())
+  reset_code           String    @default("")
+  otp_expired          Boolean   @default(false)
+  status               Boolean   @default(false)
+  active               Boolean   @default(false)
+  blocked              Boolean   @default(false)
 }
+
 // Profile
 model Profile {
   id     Int    @id @default(autoincrement())
-  bio    String
+  avater String @default("")
   user   User   @relation(fields: [userId], references: [uniqueId], onDelete: Cascade)
-  userId String    @unique
-  @@index([userId])
+  userId String @unique
 }
+
 enum Role {
   USER
   ADMIN

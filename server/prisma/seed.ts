@@ -6,7 +6,7 @@ const seed = async () => {
   await prisma.user.deleteMany();
   const user: User[] = [];
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 3; i++) {
     user.push(
         await prisma.user.create({
             data: {
@@ -17,10 +17,10 @@ const seed = async () => {
                 name: faker.name.fullName(),
                 password: faker.internet.password(),
                 passwordConfirmation: faker.internet.password(),
-                confirmationCode: faker.datatype.uuid(),
+                token: faker.datatype.uuid(),
                 isVerified: faker.helpers.arrayElement([true, false]),
                 expirer_date: faker.date.birthdate(),
-                reset_password: faker.datatype.hexadecimal(),
+                reset_code: faker.datatype.hexadecimal(),
                 otp_expired: faker.helpers.arrayElement([true, false]),
             },
         })

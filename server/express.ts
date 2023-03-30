@@ -13,12 +13,14 @@ import helmet from "helmet";
 import { logger } from "./middleware/logger";
 //All routes file is called here
 import { Routes } from "./routes/route";
-import { UserRoutes } from "./routes/auth.routes";
+import { AuthRoutes } from "./routes/auth.routes";
+import { UserRoutes }  from './routes/user.routes'
 //import prisma to connect automatically
 import { connectPrisma } from "./connectPrisma";
 //Express connection
 import rateLimit from "express-rate-limit";
 const csrf = require("csurf");
+
 // Apply the rate limiting middleware to API calls only
 export const ExpressConnection = async () => {
   const csrfProtection = csrf({
@@ -73,8 +75,9 @@ export const ExpressConnection = async () => {
   });
   // app.use('/', router);
   app.use("/api", apiLimiter);
-  UserRoutes(app);
+  AuthRoutes(app);
   Routes(app);
+  UserRoutes(app)
   await connectPrisma();
   app.listen(PORT, () => {
     logger.info(`app is been listen to on http://localhost:${PORT}`);
