@@ -6,16 +6,7 @@ export const prisma = new PrismaClient({  log: [
     { level: 'error', emit: 'event' },
   ],
   errorFormat: 'pretty',
-  rejectOnNotFound: {
-    findFirst: {
-      User: (err) => new Error('User error'),
-      Profile: (err) => new Error('profile error!'),
-    },
-    findUnique: {
-      User: (err) => new Error('User error'),
-      Profile: (err) => new Error('profile error!'),
-    },
-  },
+ 
 
  
 })

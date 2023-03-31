@@ -7,7 +7,7 @@ export default  {
     INCORRECT_OTP: 'Invalid code provided or code has expired',
     INCORRECT_DETAIL : 'Email or Password is incorrect',
     EMAIL_NOT_VERIFIED: 'You are yet to verify your email',
-    UNAUTHORIZED: 'User is not yet unauthorized',
+    UNAUTHORIZED: 'User is not unauthorized',
     VERIFIED: 'Confirmation code has been sent to your email already or your account is already verified',
     INVAILD_USER_REQUEST: 'User is not found in our database',
     VERIFIED_USER: 'Account is being verified',

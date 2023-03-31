@@ -9,14 +9,6 @@ export const uploadProfile = async (payload: Profile, user: User): Promise<ApiRe
     { 
         const uniqueId = user.token.uniqueId
         const avater = payload
-        const findUser =  await prisma.user.findUnique({ where : { uniqueId : uniqueId}})
-        if(!findUser) {
-          return {
-             ok: false,
-             message: messages.CANNOT_UPLOAD_FILE,
-             status: StatusCodes.UNAUTHORIZED
-          }
-        }
        const createProfile = await prisma.profile.create({data : { avater : avater.filename, userId : uniqueId}})
        return {
          ok: true,

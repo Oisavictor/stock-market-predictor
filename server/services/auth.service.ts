@@ -31,7 +31,8 @@ export const createUser = async (
       };
     }
     const OTP = generateOTP(4);
-    await emailTemplate(email, OTP);
+    // await emailTemplate(email, OTP);
+    console.log(OTP)
     const token = await hash(OTP.toString());
     payload.password = await hash(password);
     payload.passwordConfirmation = '' 
