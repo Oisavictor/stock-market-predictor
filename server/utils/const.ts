@@ -14,5 +14,7 @@ export default  {
     RESEND_CODE: 'Check your email for verification code',
     USER_LOGGEDIN: 'User is loggedin',
     RESET_PASSWORD_OTP: 'We sent an otp to your email',
-    INTERNAL_SERVER_ERROR: 'Internal server error'
+    INTERNAL_SERVER_ERROR: 'Internal server error',
+    CANNOT_UPLOAD_FILE: 'Sorry you are not unauthoruized to make this request',
+    FILE_UPLOADED : 'You have changed your profile',
 }

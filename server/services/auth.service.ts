@@ -1,5 +1,5 @@
-import { prisma } from "../interface/user.interface";
-import messages from "../utils/errorMessage";
+import { prisma } from "../model/user.model";
+import messages from "../utils/const";
 import { generateOTP } from "../helper/getRandomOTP";
 import { accessToken, refreshToken } from "../helper/jwtToken";
 import { hash, CompareHashed } from "../helper/hash";
@@ -13,9 +13,9 @@ import {
   verifyUserDTO,
   passwordForgottenDTO,
   IchangePassword,
-} from "../dto/auth.dto";
+} from "../interface/auth";
 
-import { ApiResponse } from "../dto/api.response";
+import { ApiResponse } from "../interface/api.response";
 
 export const createUser = async (
   payload: registerDTO

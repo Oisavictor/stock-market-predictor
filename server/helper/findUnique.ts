@@ -1,4 +1,4 @@
-import { prisma } from "../interface/user.interface";
+import { prisma } from "../model/user.model";
 export const findUnique = async (data: any) => {
   const findUnique = await prisma.user.findUnique({ where: { email: data } });
   return findUnique;

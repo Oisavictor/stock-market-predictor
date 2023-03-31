@@ -1,7 +1,6 @@
 export interface Profile {
     avater : [],
-    filename: string,
-    
+    filename: string,  
 }
 
 export interface User {

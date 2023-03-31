@@ -1,5 +1,5 @@
 import * as Joi from "joi";
-import messages from "../utils/errorMessage";
+import messages from "../utils/const";
 import { StatusCodes } from "http-status-codes";
 import { logger } from "../middleware/logger";
 

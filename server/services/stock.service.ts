@@ -1,4 +1,4 @@
 
-import messages from "../utils/errorMessage";
+import messages from "../utils/const";
 
 //Predict stock

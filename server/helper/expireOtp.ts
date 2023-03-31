@@ -1,4 +1,4 @@
-import { prisma } from "../interface/user.interface";
+import { prisma } from "../model/user.model";
 export const expirerTime = async (email: string) => {
     const time = await prisma.user.findUnique({ where : { email : email}})
     const oldDate: any = time.expirer_date 

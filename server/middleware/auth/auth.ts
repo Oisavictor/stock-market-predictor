@@ -2,7 +2,7 @@ import * as express from 'express'
 import { logger } from '../logger'
 import { StatusCodes } from "http-status-codes";
 import { accessToken, refreshToken } from "../../helper/jwtToken";
-import messages from "../../utils/errorMessage";
+import messages from "../../utils/const";
 import { verifyToken, verifyRefreshToken } from '../../helper/jwtToken';
 
 export const AuthUser = async (req, res, next) => {

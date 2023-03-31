@@ -1,7 +1,7 @@
-import {upload} from '../middleware/multer';
-import { prisma } from "../interface/user.interface";
-import {Profile, User} from '../dto/user.dto'
-import {ApiResponse} from '../dto/api.response'
+import messages from "../utils/const";
+import { prisma } from "../model/user.model";
+import {Profile, User} from '../interface/user'
+import {ApiResponse} from '../interface/api.response'
 import { StatusCodes } from "http-status-codes";
 import { logger } from "../middleware/logger";
 export const uploadProfile = async (payload: Profile, user: User): Promise<ApiResponse> => {
@@ -13,14 +13,14 @@ export const uploadProfile = async (payload: Profile, user: User): Promise<ApiRe
         if(!findUser) {
           return {
              ok: false,
-             message: 'Sorry you are not unauthoruized to make this request',
+             message: messages.CANNOT_UPLOAD_FILE,
              status: StatusCodes.UNAUTHORIZED
           }
         }
        const createProfile = await prisma.profile.create({data : { avater : avater.filename, userId : uniqueId}})
        return {
          ok: true,
-         message: 'Profile was uploaded',
+         message: messages.FILE_UPLOADED,
          status: StatusCodes.OK,
          body: {createProfile} 
        }

@@ -1,4 +1,4 @@
-import { prisma } from '../interface/user.interface'
+import { prisma } from '../model/user.model'
 async function isOtpExpired(otp) {
     const findTime  = await prisma.user.findUnique({ where: {email: 'samsononifade07@gmail.com'}})
     const now = new Date(findTime.expirer_date).getTime();

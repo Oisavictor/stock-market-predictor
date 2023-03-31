@@ -1,4 +1,4 @@
-import { prisma } from "./Interface/user.interface";
+import { prisma } from "./model/user.model";
 import { logger } from "./middleware/logger";
 export const connectPrisma = async (): Promise<void> => {
     try {
