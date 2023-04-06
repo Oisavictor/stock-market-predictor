@@ -47,7 +47,7 @@ export const VerifyUser = async (
 
     const decode = await CompareHashed( payload.code, findUser.token);
     if (!decode) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INCORRECT_OTP, };}
-  
+   
     const userConfirmed = await prisma.user.update({ where: { email: payload.email,},data: { token: "", isVerified: true, status: true}, });
     return { ok: true, status: StatusCodes.OK, message: messages.VERIFIED_USER,  body: userConfirmed,};
   }
