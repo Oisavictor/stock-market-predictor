@@ -11,7 +11,6 @@ import { apiLimiter } from "../../middleware/loader/limiter";
 
 const PORT = config.get<number>("PORT");
 //Express connection
-
 export const Connections = async () => {
   await ExpressConnection();
   app.use("/api", apiLimiter);
@@ -29,11 +28,12 @@ export const Connections = async () => {
         ok: false,
         status: StatusCodes.NOT_FOUND,
         message: "Route not found",
-        body: { IP: req.ip, method: req.method, url: req.baseUrl },
+        body: { IP: req.ip, method: req.method, url: req.url },
       });
   });
   app.listen(PORT, () => {
     logger.info(`app is been listen to on http://localhost:${PORT}`);
   });
+
 };
 Connections();

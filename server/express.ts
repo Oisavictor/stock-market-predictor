@@ -52,12 +52,12 @@ export const ExpressConnection = async () => {
   app.use(methodOverride("X-HTTP-Method-Override")); // Google/GData
   app.use(methodOverride("X-Method-Override")); //      IBM
   app.use(csrfProtection);
-  app.all('*', function (req, res, next) {
+  app.get('/csrf-token', function (req, res, next) {
     try 
     {
-      const myToken = req.csrfToken()
-      res.locals.csrftoken = req.header['csrf-token']; 
-      return res.status(StatusCodes.OK).json({ ok: true, status: StatusCodes.OK, csrf_token : myToken})
+      const csrf_token = req.csrfToken()
+      // res.locals.csrftoken = req.csrfToken['csrf-token']; 
+      return res.status(StatusCodes.OK).json({ ok: true, status: StatusCodes.OK, csrf_token : csrf_token})
     } catch (err) {
        const error = new Error("something went wrong")
        logger.error(error)
