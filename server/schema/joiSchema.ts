@@ -1,11 +1,11 @@
 import * as Joi from "joi";
-import messages from "../utils/const";
 import { StatusCodes } from "http-status-codes";
-import { logger } from "../middleware/logger";
+
 
 
 export const VRegister = async (body: any) => {
    const registerSchema =  Joi.object({
+      csrf_token : Joi.string().required(),
       name : Joi.string().required().min(3).max(100),
       email: Joi.string().email().required(),
       password: Joi.string().min(8).max(100).required(),
@@ -25,6 +25,7 @@ export const VRegister = async (body: any) => {
 
 export const VOtpVerification = async (body: any) => {
     const OtpSchema =  Joi.object({
+      // csrf_token : Joi.string().required(),
       email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } }),
       code: Joi.string().min(4).trim().max(30).required(),
     });
@@ -42,6 +43,7 @@ export const VOtpVerification = async (body: any) => {
 
 export const VLogin = async (body: any) => {
    const loginSchema = Joi.object({
+      // csrf_token : Joi.string().required(),
       email: Joi.string().email().required(),
       password: Joi.string().min(8).max(100).required(),
     });
@@ -59,6 +61,7 @@ export const VLogin = async (body: any) => {
 
 export const VForgetPassword = async (body: any) => {
   const forgetPasswordSchema = Joi.object({
+    // csrf_token : Joi.string().required(),
     email: Joi.string().email().required(),
   });
   const { error, value } = forgetPasswordSchema.validate(body, { abortEarly: false });
@@ -73,8 +76,8 @@ export const VForgetPassword = async (body: any) => {
   return value;
 }
 export const VChangePassword = async (body: any) => {
-
      const changePasswordSchema = Joi.object({
+      // csrf_token : Joi.string().required(),
       email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
       .trim()

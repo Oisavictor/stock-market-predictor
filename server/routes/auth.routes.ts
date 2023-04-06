@@ -1,7 +1,6 @@
 import * as express from "express";
 import { AuthUser, refreshTokenAuthentication } from "../middleware/auth/auth";
-import { apiLimiter } from '../helper/rateLimit';
-
+import { csrfProtection } from '../express'
 import {
   createUserController,
   verifyUserByOTP,
@@ -18,18 +17,16 @@ const api = "/api/auth";
 export const AuthRoutes = (router: any) => {
   router.post(
     `${api}/create`,
-    createUserController,
-    apiLimiter
+    createUserController, 
   );
 
   router.post(
     `${api}/verify`,
     verifyUserByOTP,
-    apiLimiter
   );
 
-  router.post(`${api}/resend`, resendOTp, apiLimiter);
-  router.post(`${api}/login`,  loginUser, apiLimiter); 
+  router.post(`${api}/resend`, resendOTp,);
+  router.post(`${api}/login`,  loginUser, csrfProtection); 
   router.post(`${api}/forget-password`,  forgottenPasswordController)
   router.put(`${api}/forgot/password`, resetPasswordController)
   router.get(`${api}/portal`, AuthUser, (req, res, next) => {

@@ -1,3 +1,4 @@
+const csrf = require("csurf");
 //All Dev dependency are called her
 import * as express from "express";
 import * as cors from "cors";
@@ -8,34 +9,19 @@ import * as expressIp from "express-ip";
 import * as methodOverride from "method-override";
 import * as flash from "connect-flash";
 import helmet from "helmet";
-
+import { StatusCodes } from "http-status-codes";
+import {logger} from './middleware/logger'
 //Logger is called here
-import { logger } from "./middleware/logger";
-//All routes file is called here
-import { Routes } from "./routes/route";
-import { AuthRoutes } from "./routes/auth.routes";
-import { UserRoutes }  from './routes/user.routes'
-//import prisma to connect automatically
-import { connectPrisma } from "./connectPrisma";
-//Express connection
-import rateLimit from "express-rate-limit";
-const csrf = require("csurf");
+
 
 // Apply the rate limiting middleware to API calls only
-export const ExpressConnection = async () => {
-  const csrfProtection = csrf({
+export const app = express();
+export const csrfProtection = csrf({
     cookie: true,
     secure: true,
   });
-  const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
-    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  });
-  const PORT = config.get<number>("PORT");
+export const ExpressConnection = async () => {
   const secrets = config.get<string>("COOKIES");
-  const app = express();
   app.set('trust proxy', 1)
   // const csrfProtect = new csrf({ cookie: true })
   app.use(express.json({ limit : "50mb"}));
@@ -66,22 +52,19 @@ export const ExpressConnection = async () => {
   app.use(methodOverride("X-HTTP-Method-Override")); // Google/GData
   app.use(methodOverride("X-Method-Override")); //      IBM
   app.use(csrfProtection);
-  app.use(function (req, res, next) {
-    const myToken = req.csrfToken()
-    // console.log(myToken);
-    
-    res.locals.csrftoken = req.headers["csrf-token"]; 
-    next();
+  app.all('*', function (req, res, next) {
+    try 
+    {
+      const myToken = req.csrfToken()
+      res.locals.csrftoken = req.header['csrf-token']; 
+      return res.status(StatusCodes.OK).json({ ok: true, status: StatusCodes.OK, csrf_token : myToken})
+    } catch (err) {
+       const error = new Error("something went wrong")
+       logger.error(error)
+       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ ok: false, message: err.message, status: StatusCodes.INTERNAL_SERVER_ERROR})
+    }
   });
-  // app.use('/', router);
-  app.use("/api", apiLimiter);
-  AuthRoutes(app);
-  Routes(app);
-  UserRoutes(app)
-  await connectPrisma();
-  app.listen(PORT, () => {
-    logger.info(`app is been listen to on http://localhost:${PORT}`);
-  });
+
 };
 
-ExpressConnection();
+

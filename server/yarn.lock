@@ -953,6 +953,11 @@
   "resolved" "https://registry.npmjs.org/@faker-js/faker/-/faker-7.6.0.tgz"
   "version" "7.6.0"
 
+"@fastify/csrf@^6.2.0":
+  "integrity" "sha512-DvBvhhAjTh4JxH7u/HAaXY6uawrEA3lGrJNTDF2R0sojwXdmFF50an2nnnHMBIsABRyNh9TueZjzgznRCe74yA=="
+  "resolved" "https://registry.npmjs.org/@fastify/csrf/-/csrf-6.2.0.tgz"
+  "version" "6.2.0"
+
 "@hapi/hoek@^9.0.0":
   "integrity" "sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ=="
   "resolved" "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.3.0.tgz"
@@ -1123,7 +1128,14 @@
   dependencies:
     "@types/node" "*"
 
-"@types/express-serve-static-core@^4.17.31":
+"@types/csurf@^1.11.2":
+  "integrity" "sha512-9bc98EnwmC1S0aSJiA8rWwXtgXtXHHOQOsGHptImxFgqm6CeH+mIOunHRg6+/eg2tlmDMX3tY7XrWxo2M/nUNQ=="
+  "resolved" "https://registry.npmjs.org/@types/csurf/-/csurf-1.11.2.tgz"
+  "version" "1.11.2"
+  dependencies:
+    "@types/express-serve-static-core" "*"
+
+"@types/express-serve-static-core@*", "@types/express-serve-static-core@^4.17.31":
   "version" "4.17.33"
   dependencies:
     "@types/node" "*"
@@ -1822,6 +1834,13 @@
   dependencies:
     "type-fest" "^2.12.2"
 
+"csrf-csrf@^2.2.4":
+  "integrity" "sha512-LuhBmy5RfRmEfeqeYqgaAuS1eDpVtKZB/Eiec9xiKQLBynJxrGVRdM2yRT/YMl1Njo/yKh2L9AYsIwSlTPnx2A=="
+  "resolved" "https://registry.npmjs.org/csrf-csrf/-/csrf-csrf-2.2.4.tgz"
+  "version" "2.2.4"
+  dependencies:
+    "http-errors" "^2.0.0"
+
 "csrf@^3.1.0", "csrf@3.1.0":
   "integrity" "sha512-uTqEnCvWRk042asU6JtapDTcJeeailFy4ydOQS28bj1hcLnYRiqi8SsD2jS412AY1I/4qdOwWZun774iqywf9w=="
   "resolved" "https://registry.npmjs.org/csrf/-/csrf-3.1.0.tgz"
@@ -2468,6 +2487,17 @@
     "glob" "^8.0.0"
     "readable-stream" "^3.6.0"
 
+"http-errors@^2.0.0", "http-errors@2.0.0":
+  "integrity" "sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ=="
+  "resolved" "https://registry.npmjs.org/http-errors/-/http-errors-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "depd" "2.0.0"
+    "inherits" "2.0.4"
+    "setprototypeof" "1.2.0"
+    "statuses" "2.0.1"
+    "toidentifier" "1.0.1"
+
 "http-errors@~1.7.3":
   "integrity" "sha512-ZTTX0MWrsQ2ZAhA1cejAwDLycFsd7I7nVtnkT3Ol0aqodaKW+0CTZDQ1uBv5whptCnc8e8HeRRJxRs0kmm/Qfw=="
   "resolved" "https://registry.npmjs.org/http-errors/-/http-errors-1.7.3.tgz"
@@ -2478,17 +2508,6 @@
     "setprototypeof" "1.1.1"
     "statuses" ">= 1.5.0 < 2"
     "toidentifier" "1.0.0"
-
-"http-errors@2.0.0":
-  "integrity" "sha512-FtwrG/euBzaEjYeRqOgly7G0qviiXoJWnvEH2Z1plBdXgbyjv34pHTSb9zoeHMyDy33+DWy5Wt9Wo+TURtOYSQ=="
-  "resolved" "https://registry.npmjs.org/http-errors/-/http-errors-2.0.0.tgz"
-  "version" "2.0.0"
-  dependencies:
-    "depd" "2.0.0"
-    "inherits" "2.0.4"
-    "setprototypeof" "1.2.0"
-    "statuses" "2.0.1"
-    "toidentifier" "1.0.1"
 
 "http-signature@~1.2.0":
   "integrity" "sha512-CAbnr6Rz4CYQkLYUtSNXxQPUH2gK8f3iWexVlsnMeD+GjlsQ0Xsy1cOX+mN3dtxYomRy21CiOzU8Uhw6OwncEQ=="

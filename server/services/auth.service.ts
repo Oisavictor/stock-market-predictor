@@ -1,12 +1,13 @@
 import { prisma } from "../model/user.model";
 import messages from "../utils/const";
-import { generateOTP } from "../helper/getRandomOTP";
+import { generateOTP } from "../helper/getRandomOtp";
 import { accessToken, refreshToken } from "../helper/jwtToken";
 import { hash, CompareHashed } from "../helper/hash";
 import { logger } from "../middleware/logger";
 import { findUnique, updateUser } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
 import { emailTemplate } from "../template/emailTemplate";
+
 import {
   registerDTO,
   loginDTO,
