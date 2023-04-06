@@ -1,16 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap");
 
-.pricingCard {
-  width: 95%;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-}
 .pricing__subCard {
   display: flex;
-  width: 30%;
+  width: 32%;
   height: 92vh;
+  position: relative;
   flex-direction: column;
   margin: 0 auto;
   padding: 30px 28px;
@@ -21,52 +15,83 @@
   flex-direction: column;
   justify-content: space-between;
 }
+.pricing__subCard:hover{
+  border: 1px solid  #0583f8;
+}
+.pricing__subCard2:hover{
+  border: 1px solid  #0583f8;
+}
+.pricing__subCard:hover .pricingType{
+  color: orange;
+}
+.pricing__subCard:hover .pricingDuration{
+  color: orange;
+}
+.pricing__subCard:hover .price{
+  color:   #0583f8;
+}
+.pricing__subCard2:hover .pricingType{
+  color: orange;
+}
+.pricing__subCard2:hover .pricingDuration{
+  color: orange;
+}
+.pricing__subCard2:hover .price{
+  color:   #0583f8;
+}
+.pricing__subCard2:hover button::after{
+  color:   #0583f8;
+  background-color: #ffffff;
+  border: 1px solid #0583f8;
+}
+
+
 .pricing__subCard2 {
   display: flex;
-  width: 30%;
+  width: 32%;
   height: 92vh;
   flex-direction: column;
   margin: 0 auto;
   padding: 30px 28px;
-  background: #EEF7FF;
-  box-shadow: 0px 8px 20px 1px rgba(17, 18, 19, 0.22);  
+  background: #eef7ff;
+  box-shadow: 0px 8px 20px 1px rgba(17, 18, 19, 0.22);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
-
-  
-
-} 
-.pricing__headWrap {
-  margin: 0 0 10px 0 ;
-
 }
-.pricingType__wrap{
+.pricing__headWrap {
+  margin: 0 0 10px 0;
+}
+.pricingType__wrap {
   width: 90%;
   height: 125px;
   position: relative;
-  top :0;
+  top: 0;
   left: 0;
 }
-.pricingType__wrap p{
+.pricingType__wrap p {
   margin: 10px 0;
 }
-.pricingType__wrap2{
+.pricingType__wrap2 {
   position: relative;
-  top: 1%; 
+  top: 1%;
   left: 0;
 }
-.pricingType__wrap3{
+.pricingType__wrap3 {
   width: 100%;
 }
-.pricingType__wrap3 ul li{
+.pricingType__wrap3 ul li {
   padding: 2px 0;
 }
-.pricingButton__wrap{
+.pricingButton__wrap {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.price{
+  padding: 0;
+  margin: 0;
+  line-height: 56px;
 }

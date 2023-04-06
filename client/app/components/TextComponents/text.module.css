@@ -1,22 +1,15 @@
-.blueHeadText {
+.RegularHeadText {
   font-weight: 700;
   font-size: 40px;
   line-height: 47px;
   letter-spacing: -0.02em;
   color: #0583f8;
 }
-.blackMediumText {
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 28px;
-  letter-spacing: -0.02em;
-  color: #000000;
-}
 .regularText {
   font-weight: 500;
   font-size: 15px;
   line-height: 140%;
-  color: #1a1d21;
+  /* color: #1a1d21; */
   font-style: normal;
 }
 .regularBoldText {
@@ -25,15 +18,4 @@
   line-height: 140%;
   color: #1a1d21;
   font-style: normal;
-}
-.blackLargeText {
-  font-weight: 700;
-  font-size: 56px;
-  display: flex;
-  align-items: center;
-  line-height: 75px;
-  letter-spacing: 0;
-}
-.blackLargeText sup {
-  margin-top: 10px;
 }

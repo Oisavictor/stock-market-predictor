@@ -1,0 +1,11 @@
+.pricing__Wrap{
+    width: 90%;
+    margin: 0 auto;
+}
+.pricing__subWrap{
+    padding: 10px 0;
+    text-align: center;
+}
+.purchase__SummaryWrap{
+    background-color: red;
+}
