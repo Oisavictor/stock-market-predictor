@@ -2,6 +2,7 @@ import * as express from "express";
 import {VAvater} from "../schema/user.schema";
 import {uploadProfile} from "../services/user.service";
 import { logger } from "../middleware/logger";
+import { StatusCodes } from "http-status-codes";
 
 export const profileController = async (req, res, next) => {
    const{file, user} = req
@@ -14,7 +15,7 @@ export const profileController = async (req, res, next) => {
     const err = new Error("Something went wrong")
     logger.error(err)
     return res
-      .status(error.status)
-      .json({ ok: false, status: error.status, message: error.message });
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ ok: false, status:StatusCodes.INTERNAL_SERVER_ERROR, message: error.message }); 
   }
 };

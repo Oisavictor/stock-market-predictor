@@ -5,7 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { accessToken } from "../../helper/jwtToken";
 import messages from "../../utils/const";
 import { verifyToken, verifyRefreshToken } from '../../helper/jwtToken';
-
+import { ExcludeField } from '../../helper/omit';
 export const AuthUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization
@@ -15,11 +15,11 @@ export const AuthUser = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
     
-    const userToken = await verifyToken(token)
-    if (!userToken) {
+    const user = await verifyToken(token)
+    if (!user) {
       return res.status(StatusCodes.UNAUTHORIZED).json({ ok: false, status: StatusCodes.UNAUTHORIZED,  message: messages.UNAUTHORIZED})
     }
-    req.user = userToken
+    req.user = user
     next()
   } catch (err) {
     const error = new Error(err.message)

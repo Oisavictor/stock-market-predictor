@@ -6,7 +6,7 @@ import { hash, CompareHashed } from "../helper/hash";
 import { findUnique } from "../helper/findUnique";
 import { StatusCodes } from "http-status-codes";
 import { emailTemplate } from "../template/emailTemplate";
-
+import { ExcludeField } from "../helper/omit";
 import {
   registerDTO,
   loginDTO,
@@ -43,11 +43,11 @@ export const VerifyUser = async (
 ): Promise<ApiResponse> => {
   
     const {email, code} = payload
-    const findUser = await findUnique(email);
+    const user = await findUnique(email);
 
-    const decode = await CompareHashed( payload.code, findUser.token);
+    const decode = await CompareHashed( payload.code, user.token);
     if (!decode) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INCORRECT_OTP, };}
-   
+    ExcludeField(user, ['password', 'passwordConfirmation'])
     const userConfirmed = await prisma.user.update({ where: { email: payload.email,},data: { token: "", isVerified: true, status: true}, });
     return { ok: true, status: StatusCodes.OK, message: messages.VERIFIED_USER,  body: userConfirmed,};
   }
@@ -55,16 +55,16 @@ export const VerifyUser = async (
 export const resendOTP = async (payload: any): Promise<ApiResponse> => {
   
     const { email } = payload;
-    const findUser = await findUnique(email);
+    const user = await findUnique(email);
 
-    if (findUser.isVerified === true) {  throw { ok: false,  status: StatusCodes.BAD_REQUEST, message: messages.VERIFIED,};}
+    if (user.isVerified === true) {  throw { ok: false,  status: StatusCodes.BAD_REQUEST, message: messages.VERIFIED,};}
     const OTP = generateOTP(4);
 
     const SendEmail = await emailTemplate(payload.email, OTP);
     if (!SendEmail) { throw { ok: false, status: StatusCodes.REQUEST_TIMEOUT, message: messages.FAILED_EMAIL,};
   }
-    findUser.token = await hash(OTP.toString());
-    const code = findUser.token;
+    user.token = await hash(OTP.toString());
+    const code = user.token;
 
     await prisma.user.update({ where: { email: email }, data: {   token: code, }, });
     return { ok: true, status: StatusCodes.OK, message: messages.RESEND_CODE,};
@@ -72,18 +72,18 @@ export const resendOTP = async (payload: any): Promise<ApiResponse> => {
 
 export const LoginUser = async (payload: loginDTO): Promise<ApiResponse> => {
     const {email, password} = payload
-    const User = await prisma.user.findUnique({ where  : { email : email}}); 
-    if (!User) { throw { ok: false, status: StatusCodes.BAD_REQUEST, message: messages.INCORRECT_DETAIL, }; }
+    const user = await prisma.user.findUnique({ where  : { email : email}}); 
+    if (!user) { throw { ok: false, status: StatusCodes.BAD_REQUEST, message: messages.INCORRECT_DETAIL, }; }
 
-    const verifyPassword = await CompareHashed( password,  User.password );
-    if (!verifyPassword || User.isVerified != true) {
+    const verifyPassword = await CompareHashed( password,  user.password );
+    if (!verifyPassword || user.isVerified != true) {
       throw {  ok: false, status: StatusCodes.BAD_REQUEST, message: messages.INCORRECT_DETAIL,}; }
-
-    const access_Token = accessToken(User);
-    const refresh_Token = refreshToken(User);
-
+    ExcludeField(user, ['password', 'passwordConfirmation'])
+    const access_Token = accessToken(user);
+    const refresh_Token = refreshToken(user);
+    
     await prisma.user.update({ where: { email: email }, data: {active: true, },});
-    return { ok: true, status: StatusCodes.OK,message: messages.USER_LOGGEDIN, body: { access_Token, refresh_Token, User } };
+    return { ok: true, status: StatusCodes.OK,message: messages.USER_LOGGEDIN, body: { access_Token, refresh_Token, user } };
    } 
   
 
@@ -92,8 +92,8 @@ export const forgottenPassword = async (
   payload: passwordForgottenDTO
 ): Promise<ApiResponse> => {
   
-    const findUser = await findUnique(payload.email);
-    if (!findUser || findUser.isVerified === false) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INVAILD_USER_REQUEST,};}
+    const user = await findUnique(payload.email);
+    if (!user || user.isVerified === false) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INVAILD_USER_REQUEST,};}
     const OTP = generateOTP(4);
 
      await emailTemplate(payload.email, OTP);
@@ -110,8 +110,8 @@ export const changePasswordService = async (
   
     
     const { email, password, code } = payload;
-    const User = await findUnique(email);
-    const confirmCode = await CompareHashed(code, User.reset_code);
+    const user = await findUnique(email);
+    const confirmCode = await CompareHashed(code, user.reset_code);
 
     if (!confirmCode) {
       throw { ok: false,status: StatusCodes.UNAUTHORIZED,message: messages.INCORRECT_OTP,};

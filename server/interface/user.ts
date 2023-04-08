@@ -3,7 +3,7 @@ export interface Profile {
     filename: string,  
 }
 
-export interface User {
+export interface IUser {
     id: number,
     uniqueId : string,
     email : string,

@@ -1,16 +1,17 @@
 import messages from "../utils/const";
 import { prisma } from "../model/user.model";
-import {Profile, User} from '../interface/user'
+import {Profile, IUser} from '../interface/user'
 import {ApiResponse} from '../interface/api.response'
 import { StatusCodes } from "http-status-codes";
-import { logger } from "../middleware/logger";
-export const uploadProfile = async (payload: Profile, user: User): Promise<ApiResponse> => {
+
+
+export const uploadProfile = async (payload: Profile, IUser: IUser): Promise<ApiResponse> => {
    
-        const uniqueId = user.token.uniqueId
+        const uniqueId = IUser.token.uniqueId
         const avater = payload
-       const createProfile = await prisma.profile.create({data : { avater : avater.filename, userId : uniqueId}})
-      //  if(createProfile.avater !== null) {
-      //   const update = await prisma.profile.update({where : {userId : uniqueId}, data : { avater : avater.filename, userId : createProfile.userId}})
+        const user = await prisma.profile.create({data : { avater : avater.filename, userId : uniqueId}})
+      //  if(user.avater !== null) {
+      //   const update = await prisma.profile.update({where : {userId : uniqueId}, data : { avater : avater.filename, userId : user.userId}})
       //   if(update) {
       //     return {
       //       ok: true,
@@ -24,7 +25,7 @@ export const uploadProfile = async (payload: Profile, user: User): Promise<ApiRe
          ok: true,
          message: messages.FILE_UPLOADED,
          status: StatusCodes.OK,
-         body: {createProfile} 
+         body: {user} 
        }
     } 
     
