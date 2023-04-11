@@ -1,0 +1,14 @@
+.logoWrap{
+    display: flex;  
+}
+.logoWrap h2{
+    color: #000000;
+    font-size: 38px;
+}
+.logoWrap :nth-child(2){
+    color: orangered;
+}
+.logoWrap sub{
+    font-size: 10px;
+    font-weight: 700;
+}

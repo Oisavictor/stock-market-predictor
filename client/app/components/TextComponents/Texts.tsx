@@ -1,7 +1,9 @@
 import React from "react";
+import { styled } from "@mui/material";
+import { Box } from "@mui/system";
 import style from "./text.module.css";
 
-export const RegularHeadText = (prop: { name: string; color: string }) => {
+export const RegularHeadText = (prop: { name: string; color?: string }) => {
   return (
     <h2 style={{ color: prop.color }} className={style.RegularHeadText}>
       {prop.name}
