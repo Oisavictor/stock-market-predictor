@@ -16,7 +16,7 @@ export const VRegister = async (body: any) => {
       throw {
         ok: false,
         message: error.message,
-        status: StatusCodes.BAD_REQUEST,
+        status: StatusCodes.BAD_REQUEST, 
       };
     }
 

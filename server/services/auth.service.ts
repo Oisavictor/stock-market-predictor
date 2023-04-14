@@ -34,6 +34,7 @@ export const createUser = async (
     payload.passwordConfirmation = '' 
 
     const createUser = await prisma.user.create({data: { token, ...payload }, });
+    ExcludeField(createUser,['password', 'passwordConfirmation', 'token'])
      return { ok: true, status: StatusCodes.CREATED,body: createUser,message: messages.CREATED, };
   }
 
@@ -45,10 +46,10 @@ export const VerifyUser = async (
     const {email, code} = payload
     const user = await findUnique(email);
 
-    const decode = await CompareHashed( payload.code, user.token);
-    if (!decode) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INCORRECT_OTP, };}
-    ExcludeField(user, ['password', 'passwordConfirmation'])
-    const userConfirmed = await prisma.user.update({ where: { email: payload.email,},data: { token: "", isVerified: true, status: true}, });
+    const decode = await CompareHashed( code, user.token);
+    if (!user || !decode) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INCORRECT_OTP, };}
+    const userConfirmed = await prisma.user.update({ where: { email: email,},data: { token: "", isVerified: true, status: true}, });
+    ExcludeField(userConfirmed, ['password', 'passwordConfirmation'])
     return { ok: true, status: StatusCodes.OK, message: messages.VERIFIED_USER,  body: userConfirmed,};
   }
 
@@ -57,9 +58,9 @@ export const resendOTP = async (payload: any): Promise<ApiResponse> => {
     const { email } = payload;
     const user = await findUnique(email);
 
-    if (user.isVerified === true) {  throw { ok: false,  status: StatusCodes.BAD_REQUEST, message: messages.VERIFIED,};}
+    if (!user || user.isVerified === true) {  throw { ok: false,  status: StatusCodes.BAD_REQUEST, message: messages.VERIFIED,};}
     const OTP = generateOTP(4);
-
+    console.log(OTP)
     const SendEmail = await emailTemplate(payload.email, OTP);
     if (!SendEmail) { throw { ok: false, status: StatusCodes.REQUEST_TIMEOUT, message: messages.FAILED_EMAIL,};
   }

@@ -5,7 +5,7 @@ export default  {
     DUPLICATE_EMAIL : 'Email duplicate is not allowed',
     FAILED_EMAIL: 'Verification code was not successfully sent',
     INCORRECT_OTP: 'Invalid code provided or code has expired',
-    INCORRECT_DETAIL : 'Email or Password is incorrect',
+    INCORRECT_DETAIL : 'Email or Password is incorrect || Account is not yet verified',
     EMAIL_NOT_VERIFIED: 'You are yet to verify your email',
     UNAUTHORIZED: 'User is not unauthorized',
     VERIFIED: 'Confirmation code has been sent to your email already or your account is already verified',

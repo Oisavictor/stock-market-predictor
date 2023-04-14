@@ -1,19 +1,16 @@
-export interface Profile {
+import { UserTypes } from "../model/types";
+
+export interface IProfile {
     avater : [],
     filename: string,  
 }
 
+export interface IUnique {
+    uniqueId : string
+}
+
 export interface IUser {
-    id: number,
-    uniqueId : string,
-    email : string,
-    name : string,
-    status: boolean,
-    isVerified: boolean,
-    active: boolean,
-    blocked: boolean,
-    createdAt : string,
-    updatedAt : string,
+    user: UserTypes,
     token : any,
     userId? : string,
 }

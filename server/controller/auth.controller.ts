@@ -21,7 +21,6 @@ export const createUserController = async (req, res, next) => {
    let payload
   try {
     payload = await VRegister(body)
-    console.log(payload)
     const user = await createUser(payload);
     return res.status(user.status).json({ ...user });
   } catch (error) {

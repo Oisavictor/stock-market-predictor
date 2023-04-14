@@ -1,4 +1,4 @@
-import * as Joi from 'Joi'
+import * as Joi from 'joi'
 import {StatusCodes} from 'http-status-codes'
 export const VAvater = async (body) => {
      const file = Joi.object({

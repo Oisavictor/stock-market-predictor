@@ -1,31 +1,32 @@
 import messages from "../utils/const";
 import { prisma } from "../model/user.model";
-import {Profile, IUser} from '../interface/user'
+import {IProfile, IUser, IUnique} from '../interface/user'
 import {ApiResponse} from '../interface/api.response'
 import { StatusCodes } from "http-status-codes";
-
-
-export const uploadProfile = async (payload: Profile, IUser: IUser): Promise<ApiResponse> => {
+import { findUserById, updateUser } from "../helper/findUnique";
+import { logger } from "../middleware/logger";
+export const uploadProfile = async (payload: IProfile, user:IUser): Promise<ApiResponse> => {
    
-        const uniqueId = IUser.token.uniqueId
+        const uniqueId = user.token.uniqueId
         const avater = payload
-        const user = await prisma.profile.create({data : { avater : avater.filename, userId : uniqueId}})
-      //  if(user.avater !== null) {
-      //   const update = await prisma.profile.update({where : {userId : uniqueId}, data : { avater : avater.filename, userId : user.userId}})
-      //   if(update) {
-      //     return {
-      //       ok: true,
-      //       message: messages.FILE_UPLOADED,
-      //       status: StatusCodes.OK,
-      //       body: {update} 
-      //     }
-      //   }
-      //  }
+        await prisma.profile.delete({ where: { userId : uniqueId}})
+        const createProfile = await prisma.profile.create({data : { avater : avater.filename, userId : uniqueId}})
        return {
          ok: true,
          message: messages.FILE_UPLOADED,
          status: StatusCodes.OK,
-         body: {user} 
+         body: {createProfile, user} 
        }
     } 
-    
+
+export const EditUser = async (payload: IUnique, user:IUser): Promise<ApiResponse> => {
+     const uniqueId = user.token.uniqueId
+     const users = await findUserById(uniqueId)
+    //  const update = await 
+     return {
+      ok: true,
+      message: messages.FILE_UPLOADED,
+      status: StatusCodes.OK,
+      body: {users} 
+     }
+}

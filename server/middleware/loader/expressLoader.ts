@@ -21,7 +21,7 @@ export const Connections = async () => {
   app.get("/", (req, res) => {
     return res.send("Happy coding");
   });
-  app.get("*", (req, res, next) => {
+  app.all("*", (req, res, next) => {
     return res
       .status(StatusCodes.NOT_FOUND)
       .json({
