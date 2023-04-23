@@ -1,5 +1,4 @@
 import * as express from "express";
-import { AuthUser, refreshTokenAuthentication } from "../middleware/auth/auth";
 import { csrfProtection } from '../express'
 import {
   createUserController,
@@ -9,36 +8,21 @@ import {
   forgottenPasswordController,
   resetPasswordController
 } from "../controller/auth.controller";
-import { getStockPrice } from "../controller/StockPriceController";
+import { refreshTokenAuthentication, AuthUser } from "../middleware/auth/auth";
+import { StatusCodes } from "http-status-codes";
+import {ApiResponse} from '../interface/api.response'
 
-
-const api = "/api/auth";
+const auth: string = "/api/auth";
 
 export const AuthRoutes = (router: any) => {
-  router.post(
-    `${api}/create`,
-    createUserController, 
-  );
-
-  router.post(
-    `${api}/verify`,
-    verifyUserByOTP,
-  );
-
-  router.post(`${api}/resend`, resendOTp,);
-  router.post(`${api}/login`,  loginUser, csrfProtection); 
-  router.post(`${api}/forget-password`,  forgottenPasswordController)
-  router.put(`${api}/forgot/password`, resetPasswordController)
-  router.get(`${api}/portal`, AuthUser, (req, res, next) => {
-    return res.status(200).json(req.user);
-  });
-  router.post(`${api}/refresh`, refreshTokenAuthentication, (req, res, next) => {
-    return res.status(200).json(req.user);
+  router.post( `${auth}/create`, createUserController, );
+  router.post(`${auth}/verify`,verifyUserByOTP,);
+  router.post(`${auth}/resend`, resendOTp,);
+  router.post(`${auth}/login`,  loginUser); 
+  router.post(`${auth}/forget-password`,  forgottenPasswordController)
+  router.put(`${auth}/forgot/password`, resetPasswordController)
+  router.get(`${auth}/refresh`, refreshTokenAuthentication, (req, res): Promise<ApiResponse> => {
+    return res.status(StatusCodes.OK).json({ok: true, status: StatusCodes.OK, message: 'New token generated', body: { token : req.user}})
   })
-  router.get("/api/:symbol", getStockPrice);
-  router.delete(`${api}/logout`, refreshTokenAuthentication, function(req, res, next) {
-  const cook = res.clearCookie('connect.sid', '', {expires: new Date(1), path: '/' });
-  console.log(cook)
- return res.status(403).status({ ok: true, msg: 'Logout'}); 
-}); 
+  
 }; 

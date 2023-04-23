@@ -7,7 +7,7 @@ export const VRegister = async (body: any) => {
    const registerSchema =  Joi.object({
       // csrf_token : Joi.string().required(),
       name : Joi.string().required().min(3).max(100),
-      email: Joi.string().email().required(),
+      email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "yahoo"] } }).required(),
       password: Joi.string().min(8).max(100).required(),
       passwordConfirmation: Joi.ref("password"),
     });

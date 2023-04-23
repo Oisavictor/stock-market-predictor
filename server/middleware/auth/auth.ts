@@ -36,7 +36,7 @@ export const refreshTokenAuthentication = async (req, res, next) => {
       return res.status(StatusCodes.UNAUTHORIZED).json({ ok: false, status: StatusCodes.UNAUTHORIZED,  message: messages.UNAUTHORIZED})
     }
   const access = await accessToken(payload)
-  res.cookie(access, {
+ res.cookie(access, {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000
   });

@@ -17,4 +17,7 @@ export default  {
     INTERNAL_SERVER_ERROR: 'Internal server error',
     CANNOT_UPLOAD_FILE: 'Sorry you are not unauthoruized to make this request',
     FILE_UPLOADED : 'You have changed your profile',
+    UNABLE_TO_SEND_OTP :"We were unable to send otp.. Please provide  us with valid email",
+    UNABLE_TO_CHANGE_THIS_PASSWORD: "Sorry we are unable to change your password",
+    UNABLE_TO_VERIFY_EMAIL: 'Unable to verify this account'
 }

@@ -7,6 +7,7 @@ import { UserRoutes } from "../../routes/user.routes";
 import { connectPrisma } from "../../connectPrisma";
 import { logger } from "../../middleware/logger";
 import { apiLimiter } from "../../middleware/loader/limiter";
+import { AuthUser } from "../auth/auth";
 
 
 const PORT = config.get<number>("PORT");
@@ -15,8 +16,8 @@ export const Connections = async () => {
   await ExpressConnection();
   app.use("/api", apiLimiter);
   AuthRoutes(app);
+  app.use(AuthUser)
   UserRoutes(app);
- 
   await connectPrisma();
   app.get("/", (req, res) => {
     return res.send("Happy coding");

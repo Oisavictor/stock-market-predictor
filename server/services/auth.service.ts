@@ -16,6 +16,7 @@ import {
 } from "../interface/auth";
 
 import { ApiResponse } from "../interface/api.response";
+import { logger } from "../middleware/logger";
 
 export const createUser = async (
   payload: registerDTO
@@ -23,11 +24,26 @@ export const createUser = async (
   
     const { name, email, password } = payload;
     const user = await findUnique(email);
-    if (user) { throw { ok: false, status: StatusCodes.BAD_REQUEST, message: messages.DUPLICATE_EMAIL,}; }
+    if (user) { 
+      throw {
+         ok: false, 
+         status: StatusCodes.BAD_REQUEST,
+          message: messages.DUPLICATE_EMAIL,
+        }; 
+      }
 
     const OTP = generateOTP(4);
-    // await emailTemplate(email, OTP);
-    console.log(OTP)
+  //   try {
+  // await emailTemplate(email, OTP);
+  //   } catch (error) {
+  //     logger.error(error)
+  //     throw {
+  //       ok: false, 
+  //       status: StatusCodes.INTERNAL_SERVER_ERROR,
+  //       message: messages.UNABLE_TO_SEND_OTP 
+  //     }
+  //   }
+  
     const token = await hash(OTP.toString());
 
     payload.password = await hash(password);
@@ -45,7 +61,7 @@ export const VerifyUser = async (
   
     const {email, code} = payload
     const user = await findUnique(email);
-
+    if (!user) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.UNABLE_TO_VERIFY_EMAIL, };}
     const decode = await CompareHashed( code, user.token);
     if (!user || !decode) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INCORRECT_OTP, };}
     const userConfirmed = await prisma.user.update({ where: { email: email,},data: { token: "", isVerified: true, status: true}, });
@@ -57,13 +73,18 @@ export const resendOTP = async (payload: any): Promise<ApiResponse> => {
   
     const { email } = payload;
     const user = await findUnique(email);
-
     if (!user || user.isVerified === true) {  throw { ok: false,  status: StatusCodes.BAD_REQUEST, message: messages.VERIFIED,};}
     const OTP = generateOTP(4);
-    console.log(OTP)
-    const SendEmail = await emailTemplate(payload.email, OTP);
-    if (!SendEmail) { throw { ok: false, status: StatusCodes.REQUEST_TIMEOUT, message: messages.FAILED_EMAIL,};
-  }
+    try {
+      await emailTemplate(email, OTP);
+        } catch (error) {
+          logger.error(error)
+          throw {
+            ok: false, 
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: messages.UNABLE_TO_SEND_OTP 
+          }
+        }
     user.token = await hash(OTP.toString());
     const code = user.token;
 
@@ -96,8 +117,16 @@ export const forgottenPassword = async (
     const user = await findUnique(payload.email);
     if (!user || user.isVerified === false) { throw { ok: false, status: StatusCodes.UNAUTHORIZED, message: messages.INVAILD_USER_REQUEST,};}
     const OTP = generateOTP(4);
-
-     await emailTemplate(payload.email, OTP);
+    try {
+      await emailTemplate(payload.email, OTP);
+        } catch (error) {
+          logger.error(error)
+          throw {
+            ok: false, 
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
+            message: messages.UNABLE_TO_SEND_OTP 
+          }
+        }
     const ResetCode = await hash(OTP.toString());
 
     await prisma.user.update({ where: { email: payload.email, }, data: {reset_code: ResetCode,},});
@@ -112,10 +141,13 @@ export const changePasswordService = async (
     
     const { email, password, code } = payload;
     const user = await findUnique(email);
+    if(!user) {
+      throw { ok: false,status: StatusCodes.BAD_REQUEST, message: messages.UNABLE_TO_CHANGE_THIS_PASSWORD,};
+    }
     const confirmCode = await CompareHashed(code, user.reset_code);
 
     if (!confirmCode) {
-      throw { ok: false,status: StatusCodes.UNAUTHORIZED,message: messages.INCORRECT_OTP,};
+      throw { ok: false,status: StatusCodes.BAD_REQUEST, message: messages.INCORRECT_OTP,};
     }
     const Password = await hash(password);
 

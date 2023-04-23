@@ -15,8 +15,8 @@ export const profileController = async (req, res, next) => {
     const err = new Error("Something went wrong")
     logger.error(err)
     return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ ok: false, status:StatusCodes.INTERNAL_SERVER_ERROR, message: error.message }); 
+      .status(error.status)
+      .json({ ok: false, status:error.status, message: error.message }); 
   }
 };
 export const EditController = async (req, res, next) => {
@@ -30,7 +30,7 @@ export const EditController = async (req, res, next) => {
     const err = new Error("Something went wrong")
     logger.error(err)
     return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ ok: false, status:StatusCodes.INTERNAL_SERVER_ERROR, message: error.message }); 
+      .status(error.status)
+      .json({ ok: false, status:error.status, message: error.message }); 
   }
 };

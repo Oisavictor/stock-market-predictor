@@ -14,7 +14,7 @@ import {
   forgottenPassword,
   changePasswordService,
 } from "../services/auth.service";
-import { StatusCodes } from "http-status-codes";
+
 
 export const createUserController = async (req, res, next) => {
    const{ body} = req
@@ -25,8 +25,8 @@ export const createUserController = async (req, res, next) => {
     return res.status(user.status).json({ ...user });
   } catch (error) {
     return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ ok: false, status: StatusCodes.INTERNAL_SERVER_ERROR, msg: error.message });
+      .status(error.status)
+      .json({ ok: false, status: error.status, msg: error.message });
   }
 };
 
@@ -40,8 +40,8 @@ export const verifyUserByOTP = async (req, res, next) => {
     return res.status(user.status).json({ ...user });
   } catch (error) {
     return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ ok: false, status: StatusCodes.INTERNAL_SERVER_ERROR, msg: error.message });
+      .status(error.status)
+      .json({ ok: false, status: error.status, msg: error.message });
   }
 };
 export const resendOTp = async (req, res, next) => {
@@ -50,8 +50,8 @@ export const resendOTp = async (req, res, next) => {
     return res.status(user.status).json({ ...user });
   } catch (error) {
     return res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ ok: false, status: StatusCodes.INTERNAL_SERVER_ERROR, msg: error.message });
+      .status(error.status)
+      .json({ ok: false, status: error.status, msg: error.message });
   }
 };
 export const loginUser = async (req, res, next) => {
@@ -69,7 +69,7 @@ export const loginUser = async (req, res, next) => {
     return res.status(loginUser.status).json({ ...loginUser });
   } catch (error) {
     console.error(error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ ok: false, status: StatusCodes.INTERNAL_SERVER_ERROR, msg: error.message });
+    return res.status(error.status).json({ ok: false, status: error.status, msg: error.message });
   }
  
 
@@ -81,10 +81,10 @@ export const forgottenPasswordController = async (req, res, next) => {
   try {
     payload = await VForgetPassword(body)
     const user = await forgottenPassword(payload);
-    return res.status(StatusCodes.OK).json({ ...user });
+    return res.status(user.status).json({ ...user });
   } catch (error) {
     console.error(error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ ok: false, status: StatusCodes.INTERNAL_SERVER_ERROR, msg: error.message });
+    return res.status(error.status).json({ ok: false, status: error.status, msg: error.message });
   }
 };
 
@@ -96,9 +96,9 @@ export  const resetPasswordController  = async (req, res, next) => {
     payload= await VChangePassword(body)
     console.log(payload)
     const user = await changePasswordService(payload);
-    return res.status(StatusCodes.OK).json({ ...user });
+    return res.status(user.status).json({ ...user });
   } catch (error) {
     console.error(error);
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ ok: false, status: StatusCodes.INTERNAL_SERVER_ERROR, msg: error.message });
+    return res.status(error.status).json({ ok: false, status: error.status, msg: error.message });
   }
 }
