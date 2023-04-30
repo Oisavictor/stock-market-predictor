@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import logo from '../../assets/logo.svg'
 
-export default function SignInFormComponent() {
+export default function SignInFormComponent(props:{setForgotPassword:any}) {
   return (
     <section className='flex flex-col w-1/2' style={{padding: 100}}>
         <div className='mr-60'>
@@ -20,9 +20,9 @@ export default function SignInFormComponent() {
                 <p className='p-5'>Password</p>
                 <input type='password' className='flex-1 p-5 focus:outline-none' required/>
             </div>
-            <p className='text-end text-blue-600'>forgot password?</p>
+            <p className='text-end text-blue-600 cursor-pointer' onClick={()=>{props.setForgotPassword(true)}}>forgot password?</p>
             <button className='w-full bg-blue-600 p-5 rounded-lg font-bold text-white mt-10'>Login</button>
-            <p className='text-center'>Don't have an account? <span className='text-red-500 font-bold'>sign up</span></p>
+            <p className='text-center'>Don't have an account? <span className='text-red-500 font-bold cursor-pointer'>sign up</span></p>
         </form>
     </section>
   )
