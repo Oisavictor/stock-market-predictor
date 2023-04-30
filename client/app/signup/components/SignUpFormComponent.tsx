@@ -29,7 +29,7 @@ export default function SignUpFormComponent() {
                 <p className='ml-5'>I accept the Terms of Service and have read the Privacy Notice</p>
             </div>
             <button className='w-full bg-blue-600 p-5 rounded-lg font-bold text-white mt-10'>Create account</button>
-            <p className='text-center'>Have an account? <span className='text-red-500'>sign in</span></p>
+            <p className='text-center'>Have an account? <span className='text-red-500 font-bold'>sign in</span></p>
         </form>
     </section>
   )
