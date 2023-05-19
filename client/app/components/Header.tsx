@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import logo from '../assets/logo.svg'
+import Link from 'next/link';
 
 export default function Header() {
   return (
@@ -15,8 +16,8 @@ export default function Header() {
         <li className='hover:text-blue-600 cursor-pointer font-bold'>Contact</li>
       </ul>
       <div className='flex flex-row justify-between'> 
-        <button className='text-black border-2 border-blue-600 w-30 px-6 mr-10 rounded-lg font-bold' >Log in</button>
-        <button className='bg-blue-600 w-30 px-6 rounded-lg font-bold text-white'>sign up</button>
+        <Link href="/signin"><button className='text-black border-2 border-blue-600 w-30 px-6 mr-10 rounded-lg font-bold py-3' >Log in</button></Link>
+        <Link href="/signup"><button className='bg-blue-600 w-30 px-6 rounded-lg font-bold text-white py-3'>sign up</button></Link>
       </div>
     </header>
   )
