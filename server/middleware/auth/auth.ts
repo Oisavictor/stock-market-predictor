@@ -6,7 +6,7 @@ import { accessToken } from "../../helper/jwtToken";
 import messages from "../../utils/const";
 import { verifyToken, verifyRefreshToken } from '../../helper/jwtToken';
 import { ExcludeField } from '../../helper/omit';
-export const AuthUser = async (req, res, next) => {
+export const AuthUser = async (req, res, next:any) => {
   try {
     const authHeader = req.headers.authorization
     if (!authHeader) {
