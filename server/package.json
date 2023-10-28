@@ -11,7 +11,7 @@
     "@types/axios": "^0.14.0",
     "@types/lusca": "^1.7.1",
     "@types/pino": "^7.0.5",
-    "axios": "^1.3.0",
+    "axios": "^1.6.0",
     "bcryptjs": "^2.4.3",
     "config": "^3.3.9",
     "connect-flash": "^0.1.1",
